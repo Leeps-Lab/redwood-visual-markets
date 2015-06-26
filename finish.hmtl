@@ -1,0 +1,48 @@
+{% load verbatim %}
+<!DOCTYPE HTML>
+{% load verbatim %}
+<!DOCTYPE HTML>
+<html ng-app="Redwood">
+<head>
+  <title>Finish</title>
+  <script type="text/javascript" src="{{ STATIC_URL }}framework/js/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}framework/js/lib/bootstrap/bootstrap-3.1.1.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}framework/js/lib/angular/angular-1.2.16.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}framework/js/redwoodCore.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}framework/js/redwoodHelpers.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}framework/js/redwoodSubject.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}framework/css/bootstrap-3.1.1.min.css"></link>
+  <script type="text/javascript">
+		{{ js }}
+	</script>
+	<style type="text/css">
+		{{ css }}
+	</style>
+</head>
+{% verbatim %}
+<body ng-controller="SubjectCtrl">
+	
+	<div class="navbar navbar-fixed-top container">
+  <div class="navbar navbar-default" style="margin-bottom: 0;">
+  	<div class="navbar-brand" href="#">Economics Experiment</div>
+		<ul class="nav navbar-nav">
+			<li class="active">
+				<a>User ID: <span>{{$root.user_id}}</span></a>
+			</li>
+		</ul>
+	</div>
+</div>
+	
+	<div class="container">
+		<table class="table table-bordered table-condensed">
+			<thead>
+  			<tr><th>Period</th><th>X</th><th>Y</th><th>Earnings</th></tr>
+			</thead>
+			<tbody id="results">
+			
+			</tbody>
+		</table>
+	</div>
+</body>
+{% endverbatim %}
+</html>
