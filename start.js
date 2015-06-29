@@ -293,6 +293,7 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         $scope.plotModel.config['removeOnPartial'] = $scope.config.removeOnPartial;
         $scope.plotModel.config['showThermometer'] = $scope.config.showThermometer;
         $scope.plotModel.config['disableHeatmapClicks'] = $scope.config.disableHeatmapClicks;
+		$scope.plotModel.config['showFrontier'] = $scope.config.showFrontier;
         $scope.plotModel.config['Ex'] = $scope.Ex;
         $scope.plotModel.config['Ey'] = $scope.Ey;
         $scope.plotModel.config['colorBound'] = $scope.config.colorBound;
@@ -488,6 +489,7 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         $scope.config.removeOnPartial = $.isArray(rs.config.removeOnPartial) ? rs.config.removeOnPartial[userIndex] : rs.config.removeOnPartial;
         $scope.config.showThermometer = $.isArray(rs.config.showThermometer) ? rs.config.showThermometer[userIndex] : rs.config.showThermometer;
         $scope.config.disableHeatmapClicks = $.isArray(rs.config.disableHeatmapClicks) ? rs.config.disableHeatmapClicks[userIndex] : rs.config.disableHeatmapClicks;
+		$scope.config.showFrontier = $.isArray(rs.config.showFrontier) ? rs.config.showFrontier[userIndex] : rs.config.showFrontier;
         $scope.config.colorBound = rs.config.colorBound;
         
         $scope.config.rounds =  rs.config.rounds;
@@ -1117,6 +1119,8 @@ setInterval(function () {
 
             function redrawProjections(projections, type) {
 
+				if (!$scope.config.showFrontier) return;
+			
                 var container = type === "bid" ? bidProjectionContainer : askProjectionContainer;
                 var color = type === "bid" ? "red" : "green";
                 var points = container.selectAll('.projection-point').data(projections || []);
@@ -1218,18 +1222,22 @@ setInterval(function () {
                     if ($scope.config.hoverTextType == 'utility') displayText = " £=["+utility.toFixed(1)+"]";
                     else if ($scope.config.hoverTextType == 'price') displayText = " P=["+price.toFixed(1)+"]";
                     else if ($scope.config.hoverTextType == 'both') displayText = " P=["+price.toFixed(1)+"]"+" £=["+utility.toFixed(1)+"]";
-
-                    switch (area) {
-                        case 'invalidArea': hoverText.text("not a trade"); break;
-                        case 'createOffer':
-                            if ($scope.config.highlightBestPrice && point.isBest) color = 'yellow';
-                            hoverText.text("Create Offer"+displayText);
-                            break;
-                        default:
-                            hoverText.text("Accept Offer"+displayText);
-                            acceptingOffer = true;
-                            break;
-                    }
+					if (!$scope.config.showFrontier) {
+						color = "grey";
+						hoverText.text(displayText);
+					} else {
+						switch (area) {
+							case 'invalidArea': hoverText.text("not a trade"); break;
+							case 'createOffer':
+								if ($scope.config.highlightBestPrice && point.isBest) color = 'yellow';
+								hoverText.text("Create Offer"+displayText);
+								break;
+							default:
+								hoverText.text("Accept Offer"+displayText);
+								acceptingOffer = true;
+								break;
+						}
+					}
                     if (xOffset > plotWidth - (7.5 * hoverText.text().length)) xHoverOffset -= (7.5 * hoverText.text().length);
                     if (yOffset < 30) yHoverOffset += 30;
                     hoverPoint.style('fill', color).attr("cx", xOffset).attr("cy", yOffset);

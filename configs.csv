@@ -1,0 +1,4 @@
+pause,groups,Ex,Ey,utility,canBid,canAsk,canBuy,canSell,ProbX,roundDuration,round,showHeatmap,numCurves,disableHeatmapClicks,showFrontier,showThermometer,showOrderBook,highlightBestPrice,highlightInsertionPoint,ghostBestOffer,convention,hoverTextType,removeOnPartial,colorBound
+FALSE,"[[1,2,3,4]]","[60,50,40,30]","[50,50,60,70]","0.7*(Math.pow(x, 0.5)*Math.pow(y, 0.2))",1,1,1,1,0.5,600,,TRUE,0,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,sequential,both,FALSE,"[0, 0.25]"
+TRUE,"[[1,2],[3,4]]",5,4,"0.3*(Math.pow(x,0.1)*Math.pow(y,0.2))","[FALSE,TRUE,TRUE]","[TRUE,FALSE,TRUE]","[TRUE,TRUE,FALSE]","[FALSE,TRUE,TRUE]",0.5,300,,TRUE,0,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,blended,price,TRUE,"[-0.25, 0.25]"
+FALSE,"[[1,2],[3,4]]",5,4,"0.3*(Math.pow(x,0.1)*Math.pow(y,0.2))","[FALSE,TRUE,TRUE]","[TRUE,FALSE,TRUE]","[TRUE,TRUE,FALSE]","[FALSE,TRUE,TRUE]",0.5,900,,FALSE,0,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,blended,price,TRUE,"[-0.25, 0.25]"
