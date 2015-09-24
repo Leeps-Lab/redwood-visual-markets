@@ -90,13 +90,13 @@
 }
 
 .panel-trade > .panel-heading, .panel-activity > .panel-heading, #header > .panel-heading {
-	background: grey;
-	color: white;
+  background: grey;
+  color: white;
 }
 
 #trades-container > .input-group, #asks-container > .input-group, #bids-container > .input-group, #actionLog > .boxes {
   border-radius: 5px;
-  opacity: 0;
+  /*opacity: 0;*/
 }
 
 #actionLog > li {
@@ -128,67 +128,67 @@
 }
 
 /*
-	These styles were extracted from bootstrap,
-	so, if you already use bootstrap, you don't
-	need this.
+  These styles were extracted from bootstrap,
+  so, if you already use bootstrap, you don't
+  need this.
 */
 
 .alert
 {
-	padding: 15px;
-	margin-bottom: 20px;
-	border: 1px solid transparent;
-	border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
 }
 
 .alert-info
 {
-	color: #31708f;
-	background-color: #d9edf7;
-	border-color: #bce8f1;
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
 }
 
 .alert-danger
 {
-	color: #a94442;
-	background-color: #f2dede;
-	border-color: #ebccd1;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
 }
 
 .alert-warning
 {
-	color: #8a6d3b;
-	background-color: #fcf8e3;
-	border-color: #faebcc;
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #faebcc;
 }
 
 .alert-success
 {
-	color: #3c763d;
-	background-color: #dff0d8;
-	border-color: #d6e9c6;
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
 }
 
 .close
 {
-	float: right;
-	font-size: 21px;
-	font-weight: 700;
-	line-height: 1;
-	color: #000;
-	text-shadow: 0 1px 0 #fff;
-	filter: alpha(opacity=20);
-	opacity: .2;
+  float: right;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  filter: alpha(opacity=20);
+  opacity: .2;
 }
 
 .close:hover,
 .close:focus
 {
-	color: #000;
-	text-decoration: none;
-	cursor: pointer;
-	filter: alpha(opacity=50);
-	opacity: .5;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  filter: alpha(opacity=50);
+  opacity: .5;
 }
 .heatmapRender {
   position: fixed;

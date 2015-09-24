@@ -64,7 +64,7 @@
                                                      key="{{bid.key}}"
                                                      ng-click="projectOffer(bid)"
                                                      ng-dblclick="openOffer(bid)"
-													 ng-right-click="cancelOffer(bid)"
+                                                     ng-right-click="cancelOffer(bid)"
                                                      style="cursor: pointer;">
                                                     <span class="input-group-addon no-input">
                                                         {{bid.price | number : 2}}
@@ -93,27 +93,27 @@
                         <div class="col-lg-4" style="padding-left: 5px; padding-right: 5px;">
                             <div class="panel panel-trade">
                                 <div class="panel-heading">Trades</div>
-								<div class="panel-body">
-									<div class="panel panel-default" style="height: 395px; overflow-y: auto;">
-										<div class="panel-body">
-											<div class="input-group input-group-sm">
-												<span class="input-group-addon no-input" style="font-weight: bold;">Price</span>
-												<span class="input-group-addon" style="font-weight: bold;">Qty</span>
-											</div>
-											<div id="trades-container">
-												<div ng-repeat="trade in trades"
-													 class="input-group input-group-sm">
-													<span class="input-group-addon no-input">
-														{{trade.price | number : 2}}
-													</span>
-													<span class="input-group-addon no-input">
-														{{trade.qty | number : 2}}
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
+                                <div class="panel-body">
+                                    <div class="panel panel-default" style="height: 395px; overflow-y: auto;">
+                                        <div class="panel-body">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-addon no-input" style="font-weight: bold;">Price</span>
+                                                <span class="input-group-addon" style="font-weight: bold;">Qty</span>
+                                            </div>
+                                            <div id="trades-container">
+                                                <div ng-repeat="trade in trades"
+                                                     class="input-group input-group-sm">
+                                                    <span class="input-group-addon no-input">
+                                                        {{trade.price | number : 2}}
+                                                    </span>
+                                                    <span class="input-group-addon no-input">
+                                                        {{trade.qty | number : 2}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-4" style="padding-left: 5px;">
@@ -132,7 +132,7 @@
                                                      key="{{ask.key}}"
                                                      ng-click="projectOffer(ask)"
                                                      ng-dblclick="openOffer(ask)"
-													 ng-right-click="cancelOffer(ask)"
+                                                     ng-right-click="cancelOffer(ask)"
                                                      style="cursor: pointer;">
                                                     <span class="input-group-addon no-input">
                                                         {{ask.price | number : 2}}
@@ -159,51 +159,51 @@
                             </div>
                         </div>
                     </div>
-					<div class="row">
-						<div class="col-lg-4" id="header">
-							<div class="panel panel-allocation">
-								<div class="panel-heading">Your Allocation</div>
-								<div class="panel-body">
-									<div class="panel panel-default" style="height: 80px;">
-										<div class="form-group">
-											<div class="input-group input-group-sm">
-												<span class="input-group-addon">X</span>
-												<span class="form-control">{{allocation.x | number : 2}}</span>
-											</div>
-											<div class="input-group input-group-sm" style="margin-top: 5px;">
-												<span class="input-group-addon">Y</span>
-												<span class="form-control">{{allocation.y | number : 2}}</span>
-											</div>
-											<div class="input-group input-group-sm" style="margin-top: 5px;">
-												<span class="input-group-addon">£</span>
-												<span class="form-control">{{utilityFunction(allocation.x, allocation.y) | number : 2}}</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-8" id="header">
-							<div class="panel panel-activity">
-								<div class="panel-heading">Activity Log</div>
-								<div class="panel-body" style="height: 132px; overflow-y: hidden;">
-									<div class="panel panel-default" style="height: 100px; overflow-y:auto;">
-										<div id="actionLog"></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-lg-4" id="header">
+                            <div class="panel panel-allocation">
+                                <div class="panel-heading">Your Allocation</div>
+                                <div class="panel-body">
+                                    <div class="panel panel-default" style="height: 80px;">
+                                        <div class="form-group">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-addon">X</span>
+                                                <span class="form-control">{{allocation.x | number : 2}}</span>
+                                            </div>
+                                            <div class="input-group input-group-sm" style="margin-top: 5px;">
+                                                <span class="input-group-addon">Y</span>
+                                                <span class="form-control">{{allocation.y | number : 2}}</span>
+                                            </div>
+                                            <div class="input-group input-group-sm" style="margin-top: 5px;">
+                                                <span class="input-group-addon">£</span>
+                                                <span class="form-control">{{utilityFunction(allocation.x, allocation.y) | number : 2}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8" id="header">
+                            <div class="panel panel-activity">
+                                <div class="panel-heading">Activity Log</div>
+                                <div class="panel-body" style="height: 132px; overflow-y: hidden;">
+                                    <div class="panel panel-default" style="height: 100px; overflow-y:auto;">
+                                        <div id="actionLog"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-6">
           <div id="thermometerDisplay">
             <label>[£]</label>
-					  <div><canvas id="thermometer" class="thermometer"></canvas></div>
+                      <div><canvas id="thermometer" class="thermometer"></canvas></div>
           </div>
-					<div class="heatmapRender" hidden><canvas id="heatmapRender"></canvas></div>
+                    <div class="heatmapRender" hidden><canvas id="heatmapRender"></canvas></div>
                     <div style="padding-right: 4px;">
                         <svg-plot ng-show="config.showHeatmap"
-								  ng-right-click="cancelPlotOffer($event)"
+                                  ng-right-click="cancelPlotOffer($event)"
                                   config="plotModel.config"
                                   bid-projections="plotModel.bidProjections"
                                   ask-projections="plotModel.askProjections"
@@ -241,7 +241,7 @@
         </div>
     </div>
 
-	<div id="state" style="display:none;"></div>
+    <div id="state" style="display:none;"></div>
 </div>
 
 

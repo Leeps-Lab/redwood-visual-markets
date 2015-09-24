@@ -1,5 +1,33 @@
 Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "SynchronizedStopWatch", "RedwoodSubject", function($compile, $rootScope, $scope, stopwatch, rs) {
 
+/* FPS CODE */
+
+var stats = new Stats();
+stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
+
+// align top-left
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.left = '0px';
+stats.domElement.style.top = '0px';
+
+document.body.appendChild( stats.domElement );
+
+var update = function () {
+
+    stats.begin();
+
+    // monitored code goes here
+
+    stats.end();
+
+    requestAnimationFrame( update );
+
+};
+
+requestAnimationFrame( update );
+
+/* FPS CODE */
+
     $scope.bid = {};
     $scope.ask = {};
     $scope.accept = { qty: 0 };
@@ -232,9 +260,9 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
             var border = info.type == 'bid' ? 'red' : 'green';
             if ($scope.trades[0].sender == rs.user_id)
                 $($('#trades-container > .input-group')[0]).css('border', '2px solid ' + border);
-            $('#trades-container > .input-group').animate({ opacity: 1 }, 250);
-            $('#actionLog').prepend('<div class="boxes">You accepted Player ' + info.offerer + "'s " + info.type + "</div>");
-            $('.boxes').animate({ opacity: 1 }, 250);
+            //$('#trades-container > .input-group').animate({ opacity: 1 }, 250);
+            //$('#actionLog').prepend('<div class="boxes">You accepted Player ' + info.offerer + "'s " + info.type + "</div>");
+            //$('.boxes').animate({ opacity: 1 }, 250);
         }, 50);
     });
     rs.recv("trade", function(sender, info) {
@@ -245,9 +273,9 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
                 offerer = "your ";
                 $($('#trades-container > .input-group')[0]).css('border', '2px solid ' + border);
             }
-            $('#trades-container > .input-group').animate({ opacity: 1 }, 250);
-            $('#actionLog').prepend('<div class="boxes">Player ' + sender + " accepted " + offerer + info.type + "</div>");
-            $('.boxes').animate({ opacity: 1 }, 250);
+            //$('#trades-container > .input-group').animate({ opacity: 1 }, 250);
+            //$('#actionLog').prepend('<div class="boxes">Player ' + sender + " accepted " + offerer + info.type + "</div>");
+            //$('.boxes').animate({ opacity: 1 }, 250);
         }, 50);
     });
     
@@ -293,7 +321,7 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         $scope.plotModel.config['removeOnPartial'] = $scope.config.removeOnPartial;
         $scope.plotModel.config['showThermometer'] = $scope.config.showThermometer;
         $scope.plotModel.config['disableHeatmapClicks'] = $scope.config.disableHeatmapClicks;
-		$scope.plotModel.config['showFrontier'] = $scope.config.showFrontier;
+        $scope.plotModel.config['showFrontier'] = $scope.config.showFrontier;
         $scope.plotModel.config['Ex'] = $scope.Ex;
         $scope.plotModel.config['Ey'] = $scope.Ey;
         $scope.plotModel.config['colorBound'] = $scope.config.colorBound;
@@ -306,6 +334,17 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
     });
 
     var checkTime = function() {
+        // $scope.timeRemaining = $scope.config.roundDuration;
+        // var timerEvent = setInterval(function(){
+        //     if ($scope.timeRemaining <= 0) {
+        //         clearInterval(timerEvent);
+        //         $scope.timeRemaining = 0;
+        //         $scope.inputsEnabled = false;
+        //         $scope.roundStartTime = null;
+        //         rs.trigger("next_round");
+        //     } else $scope.timeRemaining -= 1;
+        // }, 1000);
+        
         $scope.timeRemaining = 0;
         $scope.stopwatch = stopwatch.instance()
             .frequency(1)
@@ -354,7 +393,6 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
 
             $scope.roundStartTime = (new Date()).getTime() / 1000;
             rs.trigger("roundStartTime", $scope.roundStartTime);
-            //rs.timeout(checkTime);
             checkTime();
 
             $scope.inputsEnabled = true;
@@ -379,8 +417,8 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         $scope.offers[key] = $.extend(offer, {key: key});
         $scope.bidButtonLocked = false;
         $scope.askButtonLocked = false;
-        $('#actionLog').prepend('<div class="boxes">You placed '+type+"</div>");
-        $('.boxes').animate({ opacity: 1 }, 250);
+        //$('#actionLog').prepend('<div class="boxes">You placed '+type+"</div>");
+        //$('.boxes').animate({ opacity: 1 }, 250);
     });
 
     rs.recv("offer", function(user_id, offer) {
@@ -388,8 +426,8 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         offer = $.extend(offer, {user_id: user_id});
         var key = getOfferKey(offer);
         $scope.offers[key] = $.extend(offer, {key: key});
-        $('#actionLog').prepend('<div class="boxes">Player ' + user_id + " placed " + type + "</div>");
-        $('.boxes').animate({ opacity: 1 }, 250);
+        //$('#actionLog').prepend('<div class="boxes">Player ' + user_id + " placed " + type + "</div>");
+        //$('.boxes').animate({ opacity: 1 }, 250);
     });
     
     rs.on("cancel", function(offer) {
@@ -397,8 +435,8 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         offer = $.extend(offer, {user_id: rs.user_id});
         var key = getOfferKey(offer);
         $scope.offers[key].closed = true;
-        $('#actionLog').prepend('<div class="boxes">You cancelled your ' + type + "</div>");
-        $('.boxes').animate({ opacity: 1 }, 250);
+        //$('#actionLog').prepend('<div class="boxes">You cancelled your ' + type + "</div>");
+        //$('.boxes').animate({ opacity: 1 }, 250);
     });
     
     rs.recv("cancel", function(user_id, offer) {
@@ -406,8 +444,8 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         offer = $.extend(offer, {user_id: user_id});
         var key = getOfferKey(offer);
         $scope.offers[key].closed = true;
-        $('#actionLog').prepend('<div class="boxes">Player ' + user_id + " cancelled a " + type + "</div>");
-        $('.boxes').animate({ opacity: 1 }, 250);
+        //$('#actionLog').prepend('<div class="boxes">Player ' + user_id + " cancelled a " + type + "</div>");
+        //$('.boxes').animate({ opacity: 1 }, 250);
     });
 
     rs.on("accept", function(accepted) {
@@ -489,7 +527,7 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
         $scope.config.removeOnPartial = $.isArray(rs.config.removeOnPartial) ? rs.config.removeOnPartial[userIndex] : rs.config.removeOnPartial;
         $scope.config.showThermometer = $.isArray(rs.config.showThermometer) ? rs.config.showThermometer[userIndex] : rs.config.showThermometer;
         $scope.config.disableHeatmapClicks = $.isArray(rs.config.disableHeatmapClicks) ? rs.config.disableHeatmapClicks[userIndex] : rs.config.disableHeatmapClicks;
-		$scope.config.showFrontier = $.isArray(rs.config.showFrontier) ? rs.config.showFrontier[userIndex] : rs.config.showFrontier;
+        $scope.config.showFrontier = $.isArray(rs.config.showFrontier) ? rs.config.showFrontier[userIndex] : rs.config.showFrontier;
         $scope.config.colorBound = rs.config.colorBound;
         
         $scope.config.rounds =  rs.config.rounds;
@@ -598,7 +636,7 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
                     if (index == 0) $($(this).children()).css('background', 'yellow');
                     $(this).css('border', '2px solid green');
                 }
-                $(this).animate({ opacity: 1 }, 250);
+                //$(this).animate({ opacity: 1 }, 250);
             });
             $('#bids-container > .input-group').each(function (index) {
                 $(this).css('border-radius', '5px');
@@ -607,7 +645,7 @@ Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "Synchron
                     if (index == 0) $($(this).children()).css('background', 'yellow');
                     $(this).css('border', '2px solid red');
                 }
-                $(this).animate({ opacity: 1 }, 250);
+                //$(this).animate({ opacity: 1 }, 250);
             });
         }, 180);
         
@@ -655,7 +693,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
 
             var xMin, xMax, yMin, yMax, currentScale = 1;
 
-            var svgWidth = 625;
+            var svgWidth = 500;
             var svgHeight = svgWidth;
 
             $(element[0]).height(svgHeight);
@@ -753,28 +791,11 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
             $("#plot").on("contextmenu", function () { return false; });
 
 // START TEST
-
-// BLENDED
-
-/* var  changingPlayer = [
-    [60,50], // case a
-    [72,40], // case b
-    [54,55], // case c
-    [-18,15], // case d
-    [-24,20]], // case e
-    testCase = 1, actionIndex = 0;
     
 // Update new event
 setInterval(function () {
-    if (!$scope.allocation || actionIndex > 3) return;
     var point;
-    switch (document.URL.split('subject/')[1]) {
-        case "1": if (actionIndex == 0) point = validAreaHovered({x:50,y:80}); break;
-        case "2": if (actionIndex == 3) point = validAreaHovered({ x: changingPlayer[testCase][0], y: changingPlayer[testCase][1] }); break;
-        case "3": if (actionIndex == 1) point = validAreaHovered({x:70,y:30}); break;
-        case "4": if (actionIndex == 2) point = validAreaHovered({x:60,y:30}); break;
-    }
-    actionIndex++;
+    point = validAreaHovered({x:Math.random()*xMax,y:Math.random()*yMax});
     if (!point) return;
     // Normal sequence
     var area = point.area;
@@ -784,7 +805,7 @@ setInterval(function () {
         $scope.$emit("heatMap.click", point.x, point.y, 'createOffer', point.index);
         drawGhostProjection($scope.ghostProjections);
     } else if (area != 'invalidArea') $scope.$emit("heatMap.click", point.x, point.y, 'acceptOffer', point.index);
-}, 1000); */
+}, 1000);
 
 // END TEST
             
@@ -879,7 +900,7 @@ setInterval(function () {
                     redrawProjections($scope.bidProjections, "bid");
                     redrawProjections($scope.askProjections, "ask");
                 }, true);
-               $scope.$watch("hover", redrawHoverCurve, true);
+               //$scope.$watch("hover", redrawHoverCurve, true);
                initialize();
             });
 
@@ -1119,8 +1140,8 @@ setInterval(function () {
 
             function redrawProjections(projections, type) {
 
-				if (!$scope.config.showFrontier) return;
-			
+                if (!$scope.config.showFrontier) return;
+            
                 var container = type === "bid" ? bidProjectionContainer : askProjectionContainer;
                 var color = type === "bid" ? "red" : "green";
                 var points = container.selectAll('.projection-point').data(projections || []);
@@ -1222,22 +1243,22 @@ setInterval(function () {
                     if ($scope.config.hoverTextType == 'utility') displayText = " £=["+utility.toFixed(1)+"]";
                     else if ($scope.config.hoverTextType == 'price') displayText = " P=["+price.toFixed(1)+"]";
                     else if ($scope.config.hoverTextType == 'both') displayText = " P=["+price.toFixed(1)+"]"+" £=["+utility.toFixed(1)+"]";
-					if (!$scope.config.showFrontier) {
-						color = "grey";
-						hoverText.text(displayText);
-					} else {
-						switch (area) {
-							case 'invalidArea': hoverText.text("not a trade"); break;
-							case 'createOffer':
-								if ($scope.config.highlightBestPrice && point.isBest) color = 'yellow';
-								hoverText.text("Create Offer"+displayText);
-								break;
-							default:
-								hoverText.text("Accept Offer"+displayText);
-								acceptingOffer = true;
-								break;
-						}
-					}
+                    if (!$scope.config.showFrontier) {
+                        color = "grey";
+                        hoverText.text(displayText);
+                    } else {
+                        switch (area) {
+                            case 'invalidArea': hoverText.text("not a trade"); break;
+                            case 'createOffer':
+                                if ($scope.config.highlightBestPrice && point.isBest) color = 'yellow';
+                                hoverText.text("Create Offer"+displayText);
+                                break;
+                            default:
+                                hoverText.text("Accept Offer"+displayText);
+                                acceptingOffer = true;
+                                break;
+                        }
+                    }
                     if (xOffset > plotWidth - (7.5 * hoverText.text().length)) xHoverOffset -= (7.5 * hoverText.text().length);
                     if (yOffset < 30) yHoverOffset += 30;
                     hoverPoint.style('fill', color).attr("cx", xOffset).attr("cy", yOffset);
@@ -1522,3 +1543,189 @@ Redwood
         spacing: 10
     };
 })();
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+var Stats = function () {
+
+    var now = ( self.performance && self.performance.now ) ? self.performance.now.bind( performance ) : Date.now;
+
+    var startTime = now(), prevTime = startTime;
+    var frames = 0, mode = 0;
+
+    function createElement( tag, id, css ) {
+
+        var element = document.createElement( tag );
+        element.id = id;
+        element.style.cssText = css;
+        return element;
+
+    }
+
+    function createPanel( id, fg, bg ) {
+
+        var div = createElement( 'div', id, 'padding:0 0 3px 3px;text-align:left;background:' + bg );
+
+        var text = createElement( 'div', id + 'Text', 'font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px;color:' + fg );
+        text.innerHTML = id.toUpperCase();
+        div.appendChild( text );
+
+        var graph = createElement( 'div', id + 'Graph', 'width:74px;height:30px;background:' + fg );
+        div.appendChild( graph );
+
+        for ( var i = 0; i < 74; i ++ ) {
+
+            graph.appendChild( createElement( 'span', '', 'width:1px;height:30px;float:left;opacity:0.9;background:' + bg ) );
+
+        }
+
+        return div;
+
+    }
+
+    function setMode( value ) {
+
+        var children = container.children;
+
+        for ( var i = 0; i < children.length; i ++ ) {
+
+            children[ i ].style.display = i === value ? 'block' : 'none';
+
+        }
+
+        mode = value;
+
+    }
+
+    function updateGraph( dom, value ) {
+
+        var child = dom.appendChild( dom.firstChild );
+        child.style.height = Math.min( 30, 30 - value * 30 ) + 'px';
+
+    }
+
+    //
+
+    var container = createElement( 'div', 'stats', 'width:80px;opacity:0.9;cursor:pointer' );
+    container.addEventListener( 'mousedown', function ( event ) {
+
+        event.preventDefault();
+        setMode( ++ mode % container.children.length );
+
+    }, false );
+
+    // FPS
+
+    var fps = 0, fpsMin = Infinity, fpsMax = 0;
+
+    var fpsDiv = createPanel( 'fps', '#0ff', '#002' );
+    var fpsText = fpsDiv.children[ 0 ];
+    var fpsGraph = fpsDiv.children[ 1 ];
+
+    container.appendChild( fpsDiv );
+
+    // MS
+
+    var ms = 0, msMin = Infinity, msMax = 0;
+
+    var msDiv = createPanel( 'ms', '#0f0', '#020' );
+    var msText = msDiv.children[ 0 ];
+    var msGraph = msDiv.children[ 1 ];
+
+    container.appendChild( msDiv );
+
+    // MEM
+
+    if ( self.performance && self.performance.memory ) {
+
+        var mem = 0, memMin = Infinity, memMax = 0;
+
+        var memDiv = createPanel( 'mb', '#f08', '#201' );
+        var memText = memDiv.children[ 0 ];
+        var memGraph = memDiv.children[ 1 ];
+
+        container.appendChild( memDiv );
+
+    }
+
+    //
+
+    setMode( mode );
+
+    return {
+
+        REVISION: 14,
+
+        domElement: container,
+
+        setMode: setMode,
+
+        begin: function () {
+
+            startTime = now();
+
+        },
+
+        end: function () {
+
+            var time = now();
+
+            ms = time - startTime;
+            msMin = Math.min( msMin, ms );
+            msMax = Math.max( msMax, ms );
+
+            msText.textContent = ( ms | 0 ) + ' MS (' + ( msMin | 0 ) + '-' + ( msMax | 0 ) + ')';
+            updateGraph( msGraph, ms / 200 );
+
+            frames ++;
+
+            if ( time > prevTime + 1000 ) {
+
+                fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
+                fpsMin = Math.min( fpsMin, fps );
+                fpsMax = Math.max( fpsMax, fps );
+
+                fpsText.textContent = fps + ' FPS (' + fpsMin + '-' + fpsMax + ')';
+                updateGraph( fpsGraph, fps / 100 );
+
+                prevTime = time;
+                frames = 0;
+
+                if ( mem !== undefined ) {
+
+                    var heapSize = performance.memory.usedJSHeapSize;
+                    var heapSizeLimit = performance.memory.jsHeapSizeLimit;
+
+                    mem = Math.round( heapSize * 0.000000954 );
+                    memMin = Math.min( memMin, mem );
+                    memMax = Math.max( memMax, mem );
+
+                    memText.textContent = mem + ' MB (' + memMin + '-' + memMax + ')';
+                    updateGraph( memGraph, heapSize / heapSizeLimit );
+
+                }
+
+            }
+
+            return time;
+
+        },
+
+        update: function () {
+
+            startTime = this.end();
+
+        }
+
+    }
+
+};
+
+if ( typeof module === 'object' ) {
+
+    module.exports = Stats;
+
+}
+
