@@ -1,6 +1,6 @@
 Redwood.controller("SubjectCtrl", ["$compile", "$rootScope", "$scope", "SynchronizedStopWatch", "RedwoodSubject", function($compile, $rootScope, $scope, stopwatch, rs) {
 
-/* FPS CODE */
+/********************** FPS CODE **********************/
 
 var stats = new Stats();
 stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
@@ -26,7 +26,7 @@ var update = function () {
 
 requestAnimationFrame( update );
 
-/* FPS CODE */
+/******************** END FPS CODE ********************/
 
     $scope.bid = {};
     $scope.ask = {};
@@ -44,59 +44,97 @@ requestAnimationFrame( update );
         allocation: false
     };
     
+    // When a new bid is placed via form, show bid on heatmap
+    // Called when bid.price or bid.qty is changed on 'bidForm'
     $scope.onBidInputChange = function() {
         if(isValidBid($scope.bid.price, $scope.bid.qty)) {
             $scope.plotModel.hover = {
                 x: $scope.allocation.x + $scope.bid.qty,
                 y: $scope.allocation.y - ($scope.bid.price * $scope.bid.qty)
             };
-        } else {
+        } else { // Only show if input is valid
             $scope.plotModel.hover = false;
         }
     };
 
+
+    // Called when "Bid" is selected on 'bidForm'
+    // or when heatmap is clicked in valid bid area
     $scope.submitBid = function() {
         if(isValidBid($scope.bid.price, $scope.bid.qty)) {
             // Self-crossing (applies in all situations)
-            var askIndex = $scope.lastAskIndex, bidIndex = $scope.lastBidIndex, askKey = rs.user_id+'-'+askIndex, bidKey = rs.user_id+'-'+bidIndex;
+            var askIndex = $scope.lastAskIndex;
+            var bidIndex = $scope.lastBidIndex;
+            var askKey = rs.user_id + '-' + askIndex;
+            var bidKey = rs.user_id + '-' + bidIndex;
+
+            // Check if user has an ask with price less than the bid
             if (askIndex >= 0) {
+                // If user's last ask has price less than bid and that ask is still open
+                // Cancel the ask and bid - ask and bid cross cancel each other
                 if ($scope.offers[askKey].price <= $scope.bid.price && !$scope.offers[askKey].closed) {
+                    // Emit message and clear heatmap
                     $.simplyToast('Your orders crossed and cancelled each other.', 'info');
                     $scope.plotModel.ghostProjections = [{},{}];
+
+                    // Cancel ask and bid
                     rs.trigger("cancel", {user_id: rs.user_id, index: askIndex});
                     if (bidIndex >= 0) rs.trigger("cancel", {user_id: rs.user_id, index: bidIndex});
-                    $scope.lastBidIndex = -1; $scope.lastAskIndex = -1; return;
+
+                    $scope.lastBidIndex = -1; 
+                    $scope.lastAskIndex = -1; 
+                    return;
                 }
             }
             $scope.bidButtonLocked = true;
+
             // Blended and Sequential
-            var done = false, qty = Math.abs($scope.bid.qty);
+            var done = false;
+            var qty = Math.abs($scope.bid.qty);
+
             for (var i = 0; i < $scope.asks.length; i++) {
                 if (!$scope.asks[i].closed && 
                     (($scope.config.convention == 'blended' && $('#state').text() == 'accept') ||
                     (($scope.config.convention == 'sequential' && $scope.bid.price >= $scope.asks[i].price)))) {
+
+                    // If user bid a higher qty than asked, only accept as much as was asked for
                     if (qty >= Math.abs($scope.asks[i].qty)) {
                         $scope.accept.qty = Math.abs($scope.asks[i].qty);
                         qty += $scope.asks[i].qty;
-                    } else {
+                    } else { // Do not accept more than bid qty
                         $scope.accept.qty = qty;
                         $scope.acceptOfferFromPlot($scope.asks[i]); return;
                     }
+
                     $scope.acceptOfferFromPlot($scope.asks[i]);
                     done = true;
                 }
             }
+
+            // Should this be inside of for loop?
             if (done) return;
+
+            // Should only get here if there was no matching ask
             // Allow only one bid per person by cancelling any previous bid
-            if (bidIndex >= 0) rs.trigger("cancel", {user_id: rs.user_id, index: bidIndex});
+            if (bidIndex >= 0) {
+                rs.trigger("cancel", {user_id: rs.user_id, index: bidIndex});
+            }
+
             $scope.lastBidIndex = $scope.actionCount;
             rs.trigger("offer", {user_id: rs.user_id, index: $scope.actionCount, price: $scope.bid.price, qty: $scope.bid.qty});
+rs.set("test_user_id", rs.user_id);
+rs.set("test_index", $scope.actionCount);
+rs.set("test_price", $scope.bid.price);
+rs.set("test_qty", $scope.bid.qty);
             $scope.actionCount++;
+
         } else {
             $.simplyToast('Invalid bid!', 'info');
         }
     };
 
+    // When a new ask is placed via form, show ask on heatmap
+    // Called when ask.price or ask.qty is changed on 'askForm'
     $scope.onAskInputChange = function() {
         if (isValidAsk($scope.ask.price, -$scope.ask.qty)) {
             $scope.plotModel.hover = {
@@ -108,48 +146,84 @@ requestAnimationFrame( update );
         }
     };
 
+    // Called when "Ask" is selected on 'askForm'
+    // or when heatmap is clicked in valid ask area
     $scope.submitAsk = function() {
         if(isValidAsk($scope.ask.price, -$scope.ask.qty)) {
             // Self-crossing (applies in all situations)
-            var askIndex = $scope.lastAskIndex, bidIndex = $scope.lastBidIndex, askKey = rs.user_id+'-'+askIndex, bidKey = rs.user_id+'-'+bidIndex;
+            var askIndex = $scope.lastAskIndex;
+            var bidIndex = $scope.lastBidIndex;
+            var askKey = rs.user_id+'-'+askIndex;
+            var bidKey = rs.user_id+'-'+bidIndex;
+
+            // Check if user has a bid with price greater than the ask
             if (bidIndex >= 0) {
+                // If user's last bid has price greater than ask and that bid is still open
+                // Cancel the bid and ask - bid and ask cross cancel each other
                 if ($scope.offers[bidKey].price >= $scope.ask.price && !$scope.offers[bidKey].closed) {
+                    // Emit message and clear heatmap
                     $.simplyToast('Your orders crossed and cancelled each other.', 'info');
                     $scope.plotModel.ghostProjections = [{},{}];
+
+                    // Cancel bid and ask
                     rs.trigger("cancel", {user_id: rs.user_id, index: bidIndex});
                     if (askIndex >= 0) rs.trigger("cancel", {user_id: rs.user_id, index: askIndex});
-                    $scope.lastBidIndex = -1; $scope.lastAskIndex = -1; return;
+
+                    $scope.lastBidIndex = -1; 
+                    $scope.lastAskIndex = -1; 
+                    return;
                 }
             }
+            $scope.askButtonLocked = true;
+
             // Blended and Sequential
-            var done = false, qty = Math.abs($scope.ask.qty);
-            var total_x = 0, total_y = 0;
+            var done = false;
+            var qty = Math.abs($scope.ask.qty);
+            var total_x = 0;
+            var total_y = 0;
+
             for (var i = 0; i < $scope.bids.length; i++) {
                 if (!$scope.bids[i].closed && 
                     (($scope.config.convention == 'blended' && $('#state').text() == 'accept') ||
                     (($scope.config.convention == 'sequential' && $scope.ask.price <= $scope.bids[i].price)))) {
+
+                    // If user asked for higher qty than bid, only accept as much as was bid
                     if (qty >= $scope.bids[i].qty) {
                         $scope.accept.qty = Math.abs($scope.bids[i].qty);
                         qty -= Math.abs($scope.bids[i].qty);
-                    } else {
-                        $scope.accept.qty = qty; $scope.acceptOfferFromPlot($scope.bids[i]); return;
+                    } else { // Do not accept more than was bid
+                        $scope.accept.qty = qty; 
+                        $scope.acceptOfferFromPlot($scope.bids[i]); return;
                     }
                     $scope.acceptOfferFromPlot($scope.bids[i]);
                     done = true;
                 }
             }
+
+            // Should this be inside of for loop?
             if (done) return;
+
+            // Should only get here if there was no matching bid
             // Allow only one ask per person by cancelling any previous ask
-            $scope.askButtonLocked = true;
-            if (askIndex >= 0) rs.trigger("cancel", {user_id: rs.user_id, index: askIndex});
+            if (askIndex >= 0) {
+                rs.trigger("cancel", {user_id: rs.user_id, index: askIndex});
+            }
+
             $scope.lastAskIndex = $scope.actionCount;
             rs.trigger("offer", {user_id: rs.user_id, index: $scope.actionCount, price: $scope.ask.price, qty: -$scope.ask.qty});
+rs.set("test_user_id", rs.user_id);
+rs.set("test_index", $scope.actionCount);
+rs.set("test_price", $scope.ask.price);
+rs.set("test_qty", $scope.ask.qty);
             $scope.actionCount++;
+            
         } else {
             $.simplyToast('Invalid ask!', 'info');
         }
     };
 
+    // Projects ask/bid onto heatmap
+    // Called when an ask or bid is clicked from the ask-container or bid-container
     $scope.projectOffer = function(offer) {
         if(!$scope.inputsEnabled) return;
         if(offer.user_id === rs.user_id) return;
@@ -160,6 +234,8 @@ requestAnimationFrame( update );
         $scope.plotModel.hover = {x: x, y: y};
     };
 
+    // Opens window giving user option to accept ask/bid
+    // Called when an ask or bid is double clicked from the ask-container or bid-container
     $scope.openOffer = function(offer) {
         if(!$scope.inputsEnabled) return;
         if(offer.qty < 0 && !$scope.config.canBuy && offer.user_id !== rs.user_id) return;
@@ -171,6 +247,8 @@ requestAnimationFrame( update );
         }
     };
     
+    // Cancels ask/bid if it belongs to user
+    // Called when an ask or bid is right clicked from the ask-container or bid-container
     $scope.cancelOffer = function(offer) {
         if(!$scope.inputsEnabled) return;
         if(offer.qty < 0 && !$scope.config.canBuy && offer.user_id !== rs.user_id) return;
@@ -181,6 +259,8 @@ requestAnimationFrame( update );
         }
     }
     
+    // Cancels ask/bid when heatmap is right clicked
+    // Called when heatmap is right clicked
     $scope.cancelPlotOffer = function(e) {
         var x = $('.allocation-point').offset().left,
             y = $('.allocation-point').offset().top;
@@ -205,6 +285,10 @@ requestAnimationFrame( update );
         } else {
             $(this).attr("disabled", "disabled");
             rs.trigger("accept", {sender: rs.user_id, user_id: offer.user_id, key: offer.key, qty: sign * $scope.accept.qty});
+rs.set("test_sender", rs.user_id);
+rs.set("test_user_id", offer.user_id);
+rs.set("test_key", offer.key);
+rs.set("test_qty", sign * $scope.accept.qty);
             $("#acceptModal").modal('hide');
         }
     };
@@ -215,6 +299,10 @@ requestAnimationFrame( update );
         if(offer.qty > 0 && !$scope.config.canSell) return;
         var sign = offer.qty < 0 ? -1 : 1;
         rs.trigger("accept", {sender: rs.user_id, user_id: offer.user_id, key: getOfferKey(offer), qty: sign * $scope.accept.qty});
+rs.set("test_sender", rs.user_id);
+rs.set("test_user_id", offer.user_id);
+rs.set("test_key", offer.key);
+rs.set("test_qty", sign * $scope.accept.qty);
     }
     
     $scope.$on("heatMap.click", function(e, x, y, action, offer_index) {
@@ -449,19 +537,28 @@ requestAnimationFrame( update );
     });
 
     rs.on("accept", function(accepted) {
-        var offer = $scope.offers[accepted.key], type = offer.qty > 0 ? 'bid' : 'ask';
+        var offer = $scope.offers[accepted.key];
+        var type = offer.qty > 0 ? 'bid' : 'ask';
+
         $scope.allocation.y += offer.price * accepted.qty;
         $scope.allocation.x -= accepted.qty;
         offer.qty -= accepted.qty;
         $scope.bidButtonLocked = false;
         $scope.askButtonLocked = false;
-        if (Math.abs(offer.qty).toFixed(2) <= 0.01) offer.closed = true;
-        else if ($scope.plotModel.config.removeOnPartial == true) offer.closed = true;
+
+        if (Math.abs(offer.qty).toFixed(2) <= 0.01) { 
+            offer.closed = true; 
+        } else if ($scope.plotModel.config.removeOnPartial == true) {
+            offer.closed = true;
+        }
+
         rs.trigger("trade", angular.extend(accepted, {qty: Math.abs(accepted.qty), price: offer.price, type: type, offerer: accepted.user_id}));
+        
         if ($scope.lastBidIndex >= 0 && $scope.bid.qty > $scope.allocation.y) {
             $.simplyToast("Your bid is no longer valid!", 'info');
             rs.trigger("cancel", {user_id: rs.user_id, index: $scope.lastBidIndex});
         }
+
         if ($scope.lastAskIndex >= 0 && $scope.ask.qty > $scope.allocation.x) {
             $.simplyToast("Your ask is no longer valid!", 'info');
             rs.trigger("cancel", {user_id: rs.user_id, index: $scope.lastAskIndex});
@@ -471,12 +568,17 @@ requestAnimationFrame( update );
     rs.recv("accept", function(sender, accepted) {
         var offer = $scope.offers[accepted.key];
         offer.qty -= accepted.qty;
+
         if (accepted.user_id == rs.user_id) {
             $scope.allocation.y -= offer.price * accepted.qty;
             $scope.allocation.x += accepted.qty;
         }
-        if (Math.abs(offer.qty).toFixed(2) <= 0.01) offer.closed = true;
-        else if ($scope.plotModel.config.removeOnPartial == true) offer.closed = true;
+
+        if (Math.abs(offer.qty).toFixed(2) <= 0.01) {
+            offer.closed = true;
+        } else if ($scope.plotModel.config.removeOnPartial == true) {
+            offer.closed = true;
+        }
     });
 
     rs.on("result", function(value) {
@@ -487,8 +589,13 @@ requestAnimationFrame( update );
     });
 
     rs.on("next_period", function() {
-        var finalResult = {x: $scope.allocation.x, y: $scope.allocation.y, utility: $scope.utilityFunction($scope.allocation.x, $scope.allocation.y)};
+        var finalResult = {
+            x: $scope.allocation.x, 
+            y: $scope.allocation.y, 
+            utility: $scope.utilityFunction($scope.allocation.x, $scope.allocation.y)
+        };
         finalResult.period = rs.period;
+
         rs.set("results", finalResult);
         rs.add_points($scope.utilityFunction($scope.allocation.x, $scope.allocation.y));
         rs.next_period();
@@ -508,11 +615,20 @@ requestAnimationFrame( update );
         $scope.config.canSell = $.isArray(rs.config.canSell) ? rs.config.canSell[userIndex] : rs.config.canSell;
         
         for (var i = 0; i < rs.subjects.length; i++) {
-            if ($.isArray(rs.config.Ex)) XLimit += rs.config.Ex[rs.config.groups[rs._group-1][0]+i-1];
-            else XLimit += rs.config.Ex;
-            if ($.isArray(rs.config.Ey)) YLimit += rs.config.Ey[rs.config.groups[rs._group-1][0]+i-1];
-            else YLimit += rs.config.Ey;
+
+            if ($.isArray(rs.config.Ex)) {
+                XLimit += rs.config.Ex[rs.config.groups[rs._group-1][0]+i-1];
+            } else {
+                XLimit += rs.config.Ex;
+            }
+
+            if ($.isArray(rs.config.Ey)) {
+                YLimit += rs.config.Ey[rs.config.groups[rs._group-1][0]+i-1];
+            } else {
+                YLimit += rs.config.Ey;
+            }
         }
+
         $scope.config.XLimit = XLimit;
         $scope.config.YLimit = YLimit;
         $scope.config.showHeatmap = $.isArray(rs.config.showHeatmap) ? rs.config.showHeatmap[userIndex] : rs.config.showHeatmap;
@@ -793,19 +909,19 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
 // START TEST
     
 // Update new event
-setInterval(function () {
-    var point;
-    point = validAreaHovered({x:Math.random()*xMax,y:Math.random()*yMax});
-    if (!point) return;
-    // Normal sequence
-    var area = point.area;
-    if ($scope.config.disableHeatmapClicks) return;
-    if (point.area != 'invalidArea' && (point.x < 0 || point.y < 0)) area = 'invalidArea';
-    if (area == 'createOffer') {
-        $scope.$emit("heatMap.click", point.x, point.y, 'createOffer', point.index);
-        drawGhostProjection($scope.ghostProjections);
-    } else if (area != 'invalidArea') $scope.$emit("heatMap.click", point.x, point.y, 'acceptOffer', point.index);
-}, 1000);
+// setInterval(function () {
+//     var point;
+//     point = validAreaHovered({x:Math.random()*xMax,y:Math.random()*yMax});
+//     if (!point) return;
+//     // Normal sequence
+//     var area = point.area;
+//     if ($scope.config.disableHeatmapClicks) return;
+//     if (point.area != 'invalidArea' && (point.x < 0 || point.y < 0)) area = 'invalidArea';
+//     if (area == 'createOffer') {
+//         $scope.$emit("heatMap.click", point.x, point.y, 'createOffer', point.index);
+//         drawGhostProjection($scope.ghostProjections);
+//     } else if (area != 'invalidArea') $scope.$emit("heatMap.click", point.x, point.y, 'acceptOffer', point.index);
+// }, 1000);
 
 // END TEST
             
@@ -1244,6 +1360,7 @@ setInterval(function () {
                     else if ($scope.config.hoverTextType == 'price') displayText = " P=["+price.toFixed(1)+"]";
                     else if ($scope.config.hoverTextType == 'both') displayText = " P=["+price.toFixed(1)+"]"+" £=["+utility.toFixed(1)+"]";
                     if (!$scope.config.showFrontier) {
+                    //if ($scope.config.disableHeatmapClicks) {
                         color = "grey";
                         hoverText.text(displayText);
                     } else {
@@ -1544,6 +1661,7 @@ Redwood
     };
 })();
 
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -1728,4 +1846,3 @@ if ( typeof module === 'object' ) {
     module.exports = Stats;
 
 }
-
