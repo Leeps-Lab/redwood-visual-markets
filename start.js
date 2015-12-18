@@ -348,9 +348,9 @@ rs.set("test_qty", sign * $scope.accept.qty);
             var border = info.type == 'bid' ? 'red' : 'green';
             if ($scope.trades[0].sender == rs.user_id)
                 $($('#trades-container > .input-group')[0]).css('border', '2px solid ' + border);
-            //$('#trades-container > .input-group').animate({ opacity: 1 }, 250);
-            //$('#actionLog').prepend('<div class="boxes">You accepted Player ' + info.offerer + "'s " + info.type + "</div>");
-            //$('.boxes').animate({ opacity: 1 }, 250);
+            $('#trades-container > .input-group').animate({ opacity: 1 }, 250);
+            $('#actionLog').prepend('<div class="boxes">You accepted Player ' + info.offerer + "'s " + info.type + "</div>");
+            $('.boxes').animate({ opacity: 1 }, 250);
         }, 50);
     });
     rs.recv("trade", function(sender, info) {
@@ -361,9 +361,9 @@ rs.set("test_qty", sign * $scope.accept.qty);
                 offerer = "your ";
                 $($('#trades-container > .input-group')[0]).css('border', '2px solid ' + border);
             }
-            //$('#trades-container > .input-group').animate({ opacity: 1 }, 250);
-            //$('#actionLog').prepend('<div class="boxes">Player ' + sender + " accepted " + offerer + info.type + "</div>");
-            //$('.boxes').animate({ opacity: 1 }, 250);
+            $('#trades-container > .input-group').animate({ opacity: 1 }, 250);
+            $('#actionLog').prepend('<div class="boxes">Player ' + sender + " accepted " + offerer + info.type + "</div>");
+            $('.boxes').animate({ opacity: 1 }, 250);
         }, 50);
     });
     
@@ -505,8 +505,8 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.offers[key] = $.extend(offer, {key: key});
         $scope.bidButtonLocked = false;
         $scope.askButtonLocked = false;
-        //$('#actionLog').prepend('<div class="boxes">You placed '+type+"</div>");
-        //$('.boxes').animate({ opacity: 1 }, 250);
+        $('#actionLog').prepend('<div class="boxes">You placed '+type+"</div>");
+        $('.boxes').animate({ opacity: 1 }, 250);
     });
 
     rs.recv("offer", function(user_id, offer) {
@@ -514,8 +514,8 @@ rs.set("test_qty", sign * $scope.accept.qty);
         offer = $.extend(offer, {user_id: user_id});
         var key = getOfferKey(offer);
         $scope.offers[key] = $.extend(offer, {key: key});
-        //$('#actionLog').prepend('<div class="boxes">Player ' + user_id + " placed " + type + "</div>");
-        //$('.boxes').animate({ opacity: 1 }, 250);
+        $('#actionLog').prepend('<div class="boxes">Player ' + user_id + " placed " + type + "</div>");
+        $('.boxes').animate({ opacity: 1 }, 250);
     });
     
     rs.on("cancel", function(offer) {
@@ -523,22 +523,26 @@ rs.set("test_qty", sign * $scope.accept.qty);
         offer = $.extend(offer, {user_id: rs.user_id});
         var key = getOfferKey(offer);
         $scope.offers[key].closed = true;
-        //$('#actionLog').prepend('<div class="boxes">You cancelled your ' + type + "</div>");
-        //$('.boxes').animate({ opacity: 1 }, 250);
+        $('#actionLog').prepend('<div class="boxes">You cancelled your ' + type + "</div>");
+        $('.boxes').animate({ opacity: 1 }, 250);
     });
     
     rs.recv("cancel", function(user_id, offer) {
-        var type = offer.qty > 0 ? 'bid' : 'ask';
+        var type = offer.qty > 0 ? 'a bid' : 'an ask';
         offer = $.extend(offer, {user_id: user_id});
         var key = getOfferKey(offer);
         $scope.offers[key].closed = true;
-        //$('#actionLog').prepend('<div class="boxes">Player ' + user_id + " cancelled a " + type + "</div>");
-        //$('.boxes').animate({ opacity: 1 }, 250);
+        $('#actionLog').prepend('<div class="boxes">Player ' + user_id + " cancelled " + type + "</div>");
+        $('.boxes').animate({ opacity: 1 }, 250);
     });
 
     rs.on("accept", function(accepted) {
         var offer = $scope.offers[accepted.key];
         var type = offer.qty > 0 ? 'bid' : 'ask';
+        var offerer_x = rs.subjects[offer.user_id - 1].get("vm.allocation").x;
+        var offerer_y = rs.subjects[offer.user_id - 1].get("vm.allocation").y;
+        var sender_x = $scope.allocation.x;
+        var sender_y = $scope.allocation.y;
 
         $scope.allocation.y += offer.price * accepted.qty;
         $scope.allocation.x -= accepted.qty;
@@ -551,8 +555,16 @@ rs.set("test_qty", sign * $scope.accept.qty);
         } else if ($scope.plotModel.config.removeOnPartial == true) {
             offer.closed = true;
         }
-
-        rs.trigger("trade", angular.extend(accepted, {qty: Math.abs(accepted.qty), price: offer.price, type: type, offerer: accepted.user_id}));
+console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 1].get("vm.allocation").x);
+        rs.trigger("trade", angular.extend(accepted, {  qty: Math.abs(accepted.qty), 
+                                                        price: offer.price, 
+                                                        type: type, 
+                                                        offerer: accepted.user_id,
+                                                        offerer_x: offerer_x,
+                                                        offerer_y: offerer_y,
+                                                        sender_x: sender_x,
+                                                        sender_y: sender_y
+                                                    }));
         
         if ($scope.lastBidIndex >= 0 && $scope.bid.qty > $scope.allocation.y) {
             $.simplyToast("Your bid is no longer valid!", 'info');
@@ -752,7 +764,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
                     if (index == 0) $($(this).children()).css('background', 'yellow');
                     $(this).css('border', '2px solid green');
                 }
-                //$(this).animate({ opacity: 1 }, 250);
+                $(this).animate({ opacity: 1 }, 250);
             });
             $('#bids-container > .input-group').each(function (index) {
                 $(this).css('border-radius', '5px');
@@ -761,7 +773,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
                     if (index == 0) $($(this).children()).css('background', 'yellow');
                     $(this).css('border', '2px solid red');
                 }
-                //$(this).animate({ opacity: 1 }, 250);
+                $(this).animate({ opacity: 1 }, 250);
             });
         }, 180);
         
@@ -769,6 +781,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
 
     $scope.$watch("allocation", function(allocation) {
         $scope.plotModel.allocation = allocation;
+        rs.trigger("vm.allocation", allocation);
     }, true);
 
 }]);
@@ -809,7 +822,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
 
             var xMin, xMax, yMin, yMax, currentScale = 1;
 
-            var svgWidth = 500;
+            var svgWidth = 650;
             var svgHeight = svgWidth;
 
             $(element[0]).height(svgHeight);
