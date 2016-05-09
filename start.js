@@ -43,9 +43,13 @@ requestAnimationFrame( update );
         hover: false,
         allocation: false
     };
+<<<<<<< HEAD
     
     // When a new bid is placed via form, show bid on heatmap
     // Called when bid.price or bid.qty is changed on 'bidForm'
+=======
+
+>>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
     $scope.onBidInputChange = function() {
         if(isValidBid($scope.bid.price, $scope.bid.qty)) {
             $scope.plotModel.hover = {
@@ -61,7 +65,9 @@ requestAnimationFrame( update );
     // Called when "Bid" is selected on 'bidForm'
     // or when heatmap is clicked in valid bid area
     $scope.submitBid = function() {
+      console.log("in the bids");
         if(isValidBid($scope.bid.price, $scope.bid.qty)) {
+          console.log("is valid");
             // Self-crossing (applies in all situations)
             var askIndex = $scope.lastAskIndex;
             var bidIndex = $scope.lastBidIndex;
@@ -93,7 +99,7 @@ requestAnimationFrame( update );
             var qty = Math.abs($scope.bid.qty);
 
             for (var i = 0; i < $scope.asks.length; i++) {
-                if (!$scope.asks[i].closed && 
+                if (!$scope.asks[i].closed &&
                     (($scope.config.convention == 'blended' && $('#state').text() == 'accept') ||
                     (($scope.config.convention == 'sequential' && $scope.bid.price >= $scope.asks[i].price)))) {
 
@@ -183,7 +189,7 @@ rs.set("test_qty", $scope.bid.qty);
             var total_y = 0;
 
             for (var i = 0; i < $scope.bids.length; i++) {
-                if (!$scope.bids[i].closed && 
+                if (!$scope.bids[i].closed &&
                     (($scope.config.convention == 'blended' && $('#state').text() == 'accept') ||
                     (($scope.config.convention == 'sequential' && $scope.ask.price <= $scope.bids[i].price)))) {
 
@@ -246,9 +252,13 @@ rs.set("test_qty", $scope.ask.qty);
             $("#acceptModal").modal('show');
         }
     };
+<<<<<<< HEAD
     
     // Cancels ask/bid if it belongs to user
     // Called when an ask or bid is right clicked from the ask-container or bid-container
+=======
+
+>>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
     $scope.cancelOffer = function(offer) {
         if(!$scope.inputsEnabled) return;
         if(offer.qty < 0 && !$scope.config.canBuy && offer.user_id !== rs.user_id) return;
@@ -258,9 +268,13 @@ rs.set("test_qty", $scope.ask.qty);
             rs.trigger("cancel", {user_id: rs.user_id, index: index});
         }
     }
+<<<<<<< HEAD
     
     // Cancels ask/bid when heatmap is right clicked
     // Called when heatmap is right clicked
+=======
+
+>>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
     $scope.cancelPlotOffer = function(e) {
         var x = $('.allocation-point').offset().left,
             y = $('.allocation-point').offset().top;
@@ -292,7 +306,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
             $("#acceptModal").modal('hide');
         }
     };
-    
+
     $scope.acceptOfferFromPlot = function (offer) {
         if(!offer || offer.closed || offer.user_id == rs.user_id) return;
         if(offer.qty < 0 && !$scope.config.canBuy) return;
@@ -304,7 +318,7 @@ rs.set("test_user_id", offer.user_id);
 rs.set("test_key", offer.key);
 rs.set("test_qty", sign * $scope.accept.qty);
     }
-    
+
     $scope.$on("heatMap.click", function(e, x, y, action, offer_index) {
         $('#state').text(action);
         var qty = (x - $scope.allocation.x).toFixed(2)/1; if (Math.abs(qty) <= 0.01) return;
@@ -366,7 +380,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
             $('.boxes').animate({ opacity: 1 }, 250);
         }, 50);
     });
-    
+
     function isValidBid(price, qty) {
         return !isNaN(price)
             && price >= 0
@@ -413,12 +427,12 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.plotModel.config['Ex'] = $scope.Ex;
         $scope.plotModel.config['Ey'] = $scope.Ey;
         $scope.plotModel.config['colorBound'] = $scope.config.colorBound;
-        
+
         $scope.rounds = $scope.config.rounds || 1;
         $scope.round = 0;
         if (!$scope.config.showOrderBook) { $('.col-lg-6:first').remove(); }
         rs.trigger("next_round");
-        
+
     });
 
     var checkTime = function() {
@@ -432,7 +446,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         //         rs.trigger("next_round");
         //     } else $scope.timeRemaining -= 1;
         // }, 1000);
-        
+
         $scope.timeRemaining = 0;
         $scope.stopwatch = stopwatch.instance()
             .frequency(1)
@@ -472,7 +486,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         rs.synchronizationBarrier('round-' + $scope.round).then(function() {
 
             $scope.allocation = {x: $scope.Ex, y: $scope.Ey};
-            
+
             $scope.plotModel.config.xLimit = $scope.config.XLimit;
             $scope.plotModel.config.yLimit = $scope.config.YLimit;
             $scope.$broadcast("plot.activate");
@@ -517,7 +531,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $('#actionLog').prepend('<div class="boxes">Player ' + user_id + " placed " + type + "</div>");
         $('.boxes').animate({ opacity: 1 }, 250);
     });
-    
+
     rs.on("cancel", function(offer) {
         var type = offer.qty > 0 ? 'bid' : 'ask';
         offer = $.extend(offer, {user_id: rs.user_id});
@@ -526,7 +540,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $('#actionLog').prepend('<div class="boxes">You cancelled your ' + type + "</div>");
         $('.boxes').animate({ opacity: 1 }, 250);
     });
-    
+
     rs.recv("cancel", function(user_id, offer) {
         var type = offer.qty > 0 ? 'a bid' : 'an ask';
         offer = $.extend(offer, {user_id: user_id});
@@ -625,7 +639,7 @@ console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 
         $scope.config.canAsk = $.isArray(rs.config.canAsk) ? rs.config.canAsk[userIndex] : rs.config.canAsk;
         $scope.config.canBuy = $.isArray(rs.config.canBuy) ? rs.config.canBuy[userIndex] : rs.config.canBuy;
         $scope.config.canSell = $.isArray(rs.config.canSell) ? rs.config.canSell[userIndex] : rs.config.canSell;
-        
+
         for (var i = 0; i < rs.subjects.length; i++) {
 
             if ($.isArray(rs.config.Ex)) {
@@ -657,7 +671,7 @@ console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 
         $scope.config.disableHeatmapClicks = $.isArray(rs.config.disableHeatmapClicks) ? rs.config.disableHeatmapClicks[userIndex] : rs.config.disableHeatmapClicks;
         $scope.config.showFrontier = $.isArray(rs.config.showFrontier) ? rs.config.showFrontier[userIndex] : rs.config.showFrontier;
         $scope.config.colorBound = rs.config.colorBound;
-        
+
         $scope.config.rounds =  rs.config.rounds;
         $scope.config.roundDuration =  rs.config.roundDuration;
 
@@ -722,7 +736,7 @@ console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 
                         y: y
                     };
                 });
-            
+
         }
 
         if($scope.config.canBuy) {
@@ -755,7 +769,7 @@ console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 
                     };
                 });
         }
-        
+
         setTimeout(function() {
             $('#asks-container > .input-group').each(function (index) {
                 $(this).css('border-radius', '5px');
@@ -776,7 +790,7 @@ console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 
                 $(this).animate({ opacity: 1 }, 250);
             });
         }, 180);
-        
+
     }, true /*Deep watch*/);
 
     $scope.$watch("allocation", function(allocation) {
@@ -920,7 +934,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
             $("#plot").on("contextmenu", function () { return false; });
 
 // START TEST
-    
+
 // Update new event
 // setInterval(function () {
 //     var point;
@@ -937,7 +951,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
 // }, 1000);
 
 // END TEST
-            
+
             plot.on("click", function(e) {
                 var point = validAreaHovered($scope.hover), area = point.area;
                 if (point.area != 'invalidArea' && (point.x < 0 || point.y < 0)) area = 'invalidArea';
@@ -1109,7 +1123,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
 
                 redrawAll($scope.config);
             }
-            
+
            function sortNumber(a,b) {
                 return a - b;
             }
@@ -1152,7 +1166,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                 if ($scope.config.showThermometer) redrawThermometer();
                 else $('#thermometerDisplay').hide();
             }
-            
+
             function redrawThermometer () {
                 var c = $('#thermometer')[0];
                 if (!c) return;
@@ -1174,7 +1188,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                 for (var i = 0; i < colorRange.length; i++) {
                     var point = colorDomain[i]/(maxUtility - minUtility);
                     if (point > 1) point = 1;
-                    grd.addColorStop(point, colorRange[i]); 
+                    grd.addColorStop(point, colorRange[i]);
                 }
                 ctx.clearRect(0,0,c.width,c.height);
                 ctx.fillStyle = grd;
@@ -1217,8 +1231,8 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     .xScale(scales.xIndexToOffset)
                     .yScale(scales.yIndexToOffset);
                 redrawHoverCurve($scope.hover);
-            } 
-            
+            }
+
             function redrawAllocation(allocation) {
                 if(!$scope.config) {
                     return;
@@ -1243,7 +1257,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
 
                 allocationContainer.attr("visibility", "visible");
             }
-            
+
             function redrawHeatMap() {
                 var heatMap = d3.rw.heatMap()
                     .grid(utilityGrid)
@@ -1251,7 +1265,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     .yScale(scales.yIndexToOffset)
                     .colorScale(scales.colorScale);
                 heatMapContainer.call(heatMap);
-                
+
                 var referenceCurves = baseLayer.selectAll(".reference-curve").data(referenceValues);
                 referenceCurves.enter()
                     .append("g")
@@ -1270,7 +1284,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
             function redrawProjections(projections, type) {
 
                 if (!$scope.config.showFrontier) return;
-            
+
                 var container = type === "bid" ? bidProjectionContainer : askProjectionContainer;
                 var color = type === "bid" ? "red" : "green";
                 var points = container.selectAll('.projection-point').data(projections || []);
@@ -1289,9 +1303,9 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     .attr("cy", function(projection) {
                         return scales.yToOffset(projection.y);
                     });
-                    
+
                 points.exit().remove();
-                    
+
                 var connectors = container.selectAll('.projection-connector').data(projections || []);
 
                 var previous = [scales.xToOffset($scope.allocation.x), scales.yToOffset($scope.allocation.y)];
@@ -1310,10 +1324,10 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                         previous = current;
                     });
                 connectors.exit().remove();
-                
+
                 drawGhostProjection($scope.ghostProjections);
             }
-            
+
             function drawGhostProjection (projection) {
                 if (!$scope.config.showYourOffers) return;
                 $('.ghost-projection-point').remove(); $('.ghost-projection-connector').remove();
@@ -1395,10 +1409,10 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     hoverText.style('fill', color)
                         .attr("x", xOffset + xHoverOffset)
                         .attr("y", yOffset + yHoverOffset);
-                    
+
                     hoverContainer.call(hoverCurve.value(utility));
                     hoverContainer.attr("visibility", "visible");
-                    
+
                     if (!$scope.config.showThermometer) return;
                     redrawThermometer();
                     var c = $('#thermometer')[0];
@@ -1431,7 +1445,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     ctx.stroke();
                 }
             }
-            
+
             function validAreaHovered(hover_ori) {
                 var hover = {x: hover_ori.x * currentScale, y: hover_ori.y * currentScale};
                 var x = hover.x, y = hover.y, bids = $scope.bidProjections, asks = $scope.askProjections, alloc = $scope.allocation, type;
@@ -1460,15 +1474,15 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     return getPartial(type, alloc, hover, asks);
                 } else return {x: hover.x,y: hover.y, area:'invalidArea'};
             }
-            
+
             function distance(a,b) {
                 return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2));
             }
-            
+
             function getPrice(a,b) {
                 return (a.y-b.y)/(a.x-b.x);
             }
-            
+
             function getPartial (type, alloc, hover, offers) {
                 var x = 0, y = 0, current_price, previous_price, hover_price, previous_point = alloc, isBest = false;
                 if (type == 'ask') {
@@ -1563,7 +1577,7 @@ Redwood
             return (offer.qty > 0 ? "Bid" : "Ask");
         };
     });
-    
+
 (function()
 {
     $.simplyToast = function(message, type, options)
@@ -1621,10 +1635,10 @@ Redwood
             default:
                 $alert.css("right", "20px");
         }
-        
+
         if($alert.fadeIn) $alert.fadeIn();
         else $alert.css({display: 'block', opacity: 1});
-        
+
         function removeAlert()
         {
             $.simplyToast.remove($alert);
@@ -1858,4 +1872,8 @@ if ( typeof module === 'object' ) {
 
     module.exports = Stats;
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
