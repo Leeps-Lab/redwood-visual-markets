@@ -12,6 +12,9 @@ stats.domElement.style.top = '0px';
 
 document.body.appendChild( stats.domElement );
 
+$scope.bidButtonLocked = false;
+$scope.askButtonLocked = false;
+
 var update = function () {
 
     stats.begin();
@@ -155,7 +158,9 @@ rs.set("test_qty", $scope.bid.qty);
     // Called when "Ask" is selected on 'askForm'
     // or when heatmap is clicked in valid ask area
     $scope.submitAsk = function() {
+      console.log("submiting ask");
         if(isValidAsk($scope.ask.price, -$scope.ask.qty)) {
+          console.log("valid");
             // Self-crossing (applies in all situations)
             var askIndex = $scope.lastAskIndex;
             var bidIndex = $scope.lastBidIndex;
