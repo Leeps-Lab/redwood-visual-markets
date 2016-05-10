@@ -46,13 +46,9 @@ requestAnimationFrame( update );
         hover: false,
         allocation: false
     };
-<<<<<<< HEAD
-    
+
     // When a new bid is placed via form, show bid on heatmap
     // Called when bid.price or bid.qty is changed on 'bidForm'
-=======
-
->>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
     $scope.onBidInputChange = function() {
         if(isValidBid($scope.bid.price, $scope.bid.qty)) {
             $scope.plotModel.hover = {
@@ -90,8 +86,8 @@ requestAnimationFrame( update );
                     rs.trigger("cancel", {user_id: rs.user_id, index: askIndex});
                     if (bidIndex >= 0) rs.trigger("cancel", {user_id: rs.user_id, index: bidIndex});
 
-                    $scope.lastBidIndex = -1; 
-                    $scope.lastAskIndex = -1; 
+                    $scope.lastBidIndex = -1;
+                    $scope.lastAskIndex = -1;
                     return;
                 }
             }
@@ -180,8 +176,8 @@ rs.set("test_qty", $scope.bid.qty);
                     rs.trigger("cancel", {user_id: rs.user_id, index: bidIndex});
                     if (askIndex >= 0) rs.trigger("cancel", {user_id: rs.user_id, index: askIndex});
 
-                    $scope.lastBidIndex = -1; 
-                    $scope.lastAskIndex = -1; 
+                    $scope.lastBidIndex = -1;
+                    $scope.lastAskIndex = -1;
                     return;
                 }
             }
@@ -203,7 +199,7 @@ rs.set("test_qty", $scope.bid.qty);
                         $scope.accept.qty = Math.abs($scope.bids[i].qty);
                         qty -= Math.abs($scope.bids[i].qty);
                     } else { // Do not accept more than was bid
-                        $scope.accept.qty = qty; 
+                        $scope.accept.qty = qty;
                         $scope.acceptOfferFromPlot($scope.bids[i]); return;
                     }
                     $scope.acceptOfferFromPlot($scope.bids[i]);
@@ -227,7 +223,7 @@ rs.set("test_index", $scope.actionCount);
 rs.set("test_price", $scope.ask.price);
 rs.set("test_qty", $scope.ask.qty);
             $scope.actionCount++;
-            
+
         } else {
             $.simplyToast('Invalid ask!', 'info');
         }
@@ -257,13 +253,9 @@ rs.set("test_qty", $scope.ask.qty);
             $("#acceptModal").modal('show');
         }
     };
-<<<<<<< HEAD
-    
+
     // Cancels ask/bid if it belongs to user
     // Called when an ask or bid is right clicked from the ask-container or bid-container
-=======
-
->>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
     $scope.cancelOffer = function(offer) {
         if(!$scope.inputsEnabled) return;
         if(offer.qty < 0 && !$scope.config.canBuy && offer.user_id !== rs.user_id) return;
@@ -273,13 +265,9 @@ rs.set("test_qty", $scope.ask.qty);
             rs.trigger("cancel", {user_id: rs.user_id, index: index});
         }
     }
-<<<<<<< HEAD
-    
+
     // Cancels ask/bid when heatmap is right clicked
     // Called when heatmap is right clicked
-=======
-
->>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
     $scope.cancelPlotOffer = function(e) {
         var x = $('.allocation-point').offset().left,
             y = $('.allocation-point').offset().top;
@@ -404,6 +392,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
     }
 
     rs.on_load(function() {
+      console.log(rs.config);
 
         processConfig();
 
@@ -432,6 +421,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.plotModel.config['Ex'] = $scope.Ex;
         $scope.plotModel.config['Ey'] = $scope.Ey;
         $scope.plotModel.config['colorBound'] = $scope.config.colorBound;
+        $scope.plotModel.config['heatmapHover'] = $scope.config.heatmapHover;
 
         $scope.rounds = $scope.config.rounds || 1;
         $scope.round = 0;
@@ -569,22 +559,22 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.bidButtonLocked = false;
         $scope.askButtonLocked = false;
 
-        if (Math.abs(offer.qty).toFixed(2) <= 0.01) { 
-            offer.closed = true; 
+        if (Math.abs(offer.qty).toFixed(2) <= 0.01) {
+            offer.closed = true;
         } else if ($scope.plotModel.config.removeOnPartial == true) {
             offer.closed = true;
         }
-console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 1].get("vm.allocation").x);
-        rs.trigger("trade", angular.extend(accepted, {  qty: Math.abs(accepted.qty), 
-                                                        price: offer.price, 
-                                                        type: type, 
+
+        rs.trigger("trade", angular.extend(accepted, {  qty: Math.abs(accepted.qty),
+                                                        price: offer.price,
+                                                        type: type,
                                                         offerer: accepted.user_id,
                                                         offerer_x: offerer_x,
                                                         offerer_y: offerer_y,
                                                         sender_x: sender_x,
                                                         sender_y: sender_y
                                                     }));
-        
+
         if ($scope.lastBidIndex >= 0 && $scope.bid.qty > $scope.allocation.y) {
             $.simplyToast("Your bid is no longer valid!", 'info');
             rs.trigger("cancel", {user_id: rs.user_id, index: $scope.lastBidIndex});
@@ -621,8 +611,8 @@ console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 
 
     rs.on("next_period", function() {
         var finalResult = {
-            x: $scope.allocation.x, 
-            y: $scope.allocation.y, 
+            x: $scope.allocation.x,
+            y: $scope.allocation.y,
             utility: $scope.utilityFunction($scope.allocation.x, $scope.allocation.y)
         };
         finalResult.period = rs.period;
@@ -644,6 +634,7 @@ console.log("subject " + offer.user_id + " data " + rs.subjects[offer.user_id - 
         $scope.config.canAsk = $.isArray(rs.config.canAsk) ? rs.config.canAsk[userIndex] : rs.config.canAsk;
         $scope.config.canBuy = $.isArray(rs.config.canBuy) ? rs.config.canBuy[userIndex] : rs.config.canBuy;
         $scope.config.canSell = $.isArray(rs.config.canSell) ? rs.config.canSell[userIndex] : rs.config.canSell;
+        $scope.config.heatmapHover = $.isArray(rs.config.heatmapHover) ? rs.config.heatmapHover[userIndex] : rs.config.heatmapHover;
 
         for (var i = 0; i < rs.subjects.length; i++) {
 
@@ -1373,6 +1364,9 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                 if(!$scope.config) {
                     return;
                 }
+                if ($scope.config.heatmapHover) {
+                  return;
+                }
 
                 if(!hover) {
                     hoverContainer.attr("visibility", "hidden");
@@ -1877,8 +1871,4 @@ if ( typeof module === 'object' ) {
 
     module.exports = Stats;
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> e1865393bb654ce76c535ea2a692569ea3eebfec
