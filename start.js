@@ -667,6 +667,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.config.disableHeatmapClicks = $.isArray(rs.config.disableHeatmapClicks) ? rs.config.disableHeatmapClicks[userIndex] : rs.config.disableHeatmapClicks;
         $scope.config.showFrontier = $.isArray(rs.config.showFrontier) ? rs.config.showFrontier[userIndex] : rs.config.showFrontier;
         $scope.config.colorBound = rs.config.colorBound;
+        $scope.config.disableTextInput = $.isArray(rs.config.disableTextInput) ? rs.config.disableTextInput[userIndex] : rs.config.disableTextInput;
 
         $scope.config.rounds =  rs.config.rounds;
         $scope.config.roundDuration =  rs.config.roundDuration;
@@ -1364,7 +1365,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                 if(!$scope.config) {
                     return;
                 }
-                if ($scope.config.heatmapHover) {
+                if (!$scope.config.heatmapHover) {
                   return;
                 }
 

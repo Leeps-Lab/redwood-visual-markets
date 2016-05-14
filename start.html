@@ -76,7 +76,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="bidForm" ng-show="config.canBid" ng-enabled="inputsEnabled" class="form-group">
+                                    <div ng-if="config.disableTextInput" id="bidForm" ng-show="config.canBid" ng-enabled="inputsEnabled" class="form-group">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-addon">Price</span>
                                             <input type="number" ng-model="bid.price" ng-change="onBidInputChange()" min="0" id="bid-price" class="form-control"/>
@@ -85,7 +85,7 @@
                                             <span class="input-group-addon">Qty</span>
                                             <input type="number" ng-model="bid.qty" ng-change="onBidInputChange()" min="0" class="form-control"/>
                                         </div>
-                                        <button ng-click="submitBid()" ng-disabled="bidButtonLocked" class="btn btn-danger btn-sm">Bid</button>
+                                        <button ng-if="disableTextInput" ng-click="submitBid()" ng-disabled="bidButtonLocked" class="btn btn-danger btn-sm">Bid</button>
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="askForm" ng-show="config.canAsk" ng-enabled="inputsEnabled" class="form-group">
+                                    <div ng-if="config.disableTextInput" id="askForm" ng-show="config.canAsk" ng-enabled="inputsEnabled" class="form-group">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-addon">Price</span>
                                             <input type="number" ng-model="ask.price" ng-change="onAskInputChange()" min="0" class="form-control"/>

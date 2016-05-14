@@ -1,0 +1,25 @@
+TODO:
+Treatments:
+baseline: only text input to place and accept orders, heatmap visible showing prefs, actual location and proposed trade locations.
+baseline + can enter orders from heatmap (reflected in text) as well as text orders.
+same plus visual display of orderbook (lines on heatmap)
+same plus visual display of best, and other bells and whistles
+same minus text-input.
+
+Config options:
+Terms to know:
+"heatmap": the heatmap on the right of the orderbook. This is always turned on, the heatmap is always visible
+"order book": the lefthand box containing potential and accepted bid and asks. Boolean to turn this on and off.
+"visual display of order book" if this feature is on, In the heatmap, you can see all potential bids and asks that also appear in the orderbook. These appear as lines extending from that subjects current allocation of X & Y. When this feature is FALSE, you cannot see these potential bids/asks in the heatmap, only in the orderbook
+
+Config Booleans:
+- Boolean: Turn on and off text input. When on one setting, subject can enter potential bid/ask via text input (that little text box in bottom left)
+-Boolean:"using heatmap to place orders":
+Option 1: when clicking in the heatmap, a potential bid or ask (depending on the heatmap quadrant clicked on) should appear in the text-box to place a text order. however, this order does not automatically get placed in the potential bid-ask order book until the subject clicks to confirm
+Option 2: auto place order when clicking on heatmap: unlike option 1 above, when subjects clicks in heatmap to place a bid or ask, it automatically appears in the order book. No second confirmation step.
+- Boolean "visual display of orderbook": Boolean to turn this on and off.
+- Boolean: " plus visual display of best", what should it be when false? Email sent to Ryan.
+
+Goals:
+see whether we can get folks to respond to fine changes in price when visual, comparable to text.
+Later treatments: consider using experienced subjects, those who have demonstrated in previous sessions that they can fly this plane.
