@@ -50,14 +50,17 @@ requestAnimationFrame( update );
     // When a new bid is placed via form, show bid on heatmap
     // Called when bid.price or bid.qty is changed on 'bidForm'
     $scope.onBidInputChange = function() {
-        if(isValidBid($scope.bid.price, $scope.bid.qty)) {
-            $scope.plotModel.hover = {
-                x: $scope.allocation.x + $scope.bid.qty,
-                y: $scope.allocation.y - ($scope.bid.price * $scope.bid.qty)
-            };
-        } else { // Only show if input is valid
-            $scope.plotModel.hover = false;
-        }
+      console.log('change');
+      if(isValidBid($scope.bid.price, $scope.bid.qty)) {
+        console.log('isvalid');
+        $scope.plotModel.hover = {
+          x: $scope.allocation.x + $scope.bid.qty,
+          y: $scope.allocation.y - ($scope.bid.price * $scope.bid.qty)
+        };
+      } else { // Only show if input is valid
+        console.log('nope');
+        $scope.plotModel.hover = false;
+      }
     };
 
 
@@ -314,38 +317,46 @@ rs.set("test_qty", sign * $scope.accept.qty);
 
     $scope.$on("heatMap.click", function(e, x, y, action, offer_index) {
         $('#state').text(action);
-        var qty = (x - $scope.allocation.x).toFixed(2)/1; if (Math.abs(qty) <= 0.01) return;
-        var price = (($scope.allocation.y - y)/qty).toFixed(2)/1, i;
+        var qty = (x - $scope.allocation.x).toFixed(2)/1;
+        if (Math.abs(qty) <= 0.01) return;
+        var price = (($scope.allocation.y - y)/qty).toFixed(2)/1;
+        var i;
         if ($scope.config.canBid && isValidBid(price, qty)) {
-            if (action == 'createOffer') {
-                $scope.bid = {price: price, qty: qty};
-                $scope.submitBid();
-            } else if (action == 'acceptOffer') {
-                for (i = 0; i < offer_index; i++) {
-                    qty += $scope.asks[i].qty;
-                    $scope.accept.qty = -$scope.asks[i].qty;
-                    $scope.acceptOfferFromPlot($scope.asks[i]);
-                }
-                if (qty.toFixed(2) != 0) {
-                    $scope.accept.qty = qty;
-                    $scope.acceptOfferFromPlot($scope.asks[i]);
-                }
+          // if need to confirm, set values here
+          if ($scope.config.confirmClick) {
+            $scope.bid = {price: price, qty: qty};
+          } else if (action == 'createOffer') {
+            $scope.bid = {price: price, qty: qty};
+            $scope.submitBid();
+          } else if (action == 'acceptOffer') {
+            for (i = 0; i < offer_index; i++) {
+              qty += $scope.asks[i].qty;
+              $scope.accept.qty = -$scope.asks[i].qty;
+              $scope.acceptOfferFromPlot($scope.asks[i]);
             }
+            if (qty.toFixed(2) != 0) {
+              $scope.accept.qty = qty;
+              $scope.acceptOfferFromPlot($scope.asks[i]);
+            }
+          }
         } else if ($scope.config.canAsk && isValidAsk(price, qty)) {
-            if (action == 'createOffer') {
-                $scope.ask = {price: price, qty: -qty};
-                $scope.submitAsk();
-            } else if (action == 'acceptOffer') {
-                for (i = 0; i < offer_index; i++) {
-                    qty += $scope.bids[i].qty;
-                    $scope.accept.qty = $scope.bids[i].qty;
-                    $scope.acceptOfferFromPlot($scope.bids[i]);
-                }
-                if (qty.toFixed(2) != 0) {
-                    $scope.accept.qty = -qty;
-                    $scope.acceptOfferFromPlot($scope.bids[i]);
-                }
+          // if need to confirm, set values here
+          if ($scope.config.confirmClick) {
+            $scope.ask = {price: price, qty: -qty};
+          } else if (action == 'createOffer') {
+            $scope.ask = {price: price, qty: -qty};
+            $scope.submitAsk();
+          } else if (action == 'acceptOffer') {
+            for (i = 0; i < offer_index; i++) {
+              qty += $scope.bids[i].qty;
+              $scope.accept.qty = $scope.bids[i].qty;
+              $scope.acceptOfferFromPlot($scope.bids[i]);
             }
+            if (qty.toFixed(2) != 0) {
+              $scope.accept.qty = -qty;
+              $scope.acceptOfferFromPlot($scope.bids[i]);
+            }
+          }
         }
     });
 
@@ -635,6 +646,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.config.canBuy = $.isArray(rs.config.canBuy) ? rs.config.canBuy[userIndex] : rs.config.canBuy;
         $scope.config.canSell = $.isArray(rs.config.canSell) ? rs.config.canSell[userIndex] : rs.config.canSell;
         $scope.config.heatmapHover = $.isArray(rs.config.heatmapHover) ? rs.config.heatmapHover[userIndex] : rs.config.heatmapHover;
+        $scope.config.confirmClick = $.isArray(rs.config.confirmClick) ? rs.config.confirmClick[userIndex] : rs.config.confirmClick;
 
         for (var i = 0; i < rs.subjects.length; i++) {
 
@@ -930,25 +942,6 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
             var hoverCurve = d3.rw.indifferenceCurve();
             $("#plot").on("contextmenu", function () { return false; });
 
-// START TEST
-
-// Update new event
-// setInterval(function () {
-//     var point;
-//     point = validAreaHovered({x:Math.random()*xMax,y:Math.random()*yMax});
-//     if (!point) return;
-//     // Normal sequence
-//     var area = point.area;
-//     if ($scope.config.disableHeatmapClicks) return;
-//     if (point.area != 'invalidArea' && (point.x < 0 || point.y < 0)) area = 'invalidArea';
-//     if (area == 'createOffer') {
-//         $scope.$emit("heatMap.click", point.x, point.y, 'createOffer', point.index);
-//         drawGhostProjection($scope.ghostProjections);
-//     } else if (area != 'invalidArea') $scope.$emit("heatMap.click", point.x, point.y, 'acceptOffer', point.index);
-// }, 1000);
-
-// END TEST
-
             plot.on("click", function(e) {
                 var point = validAreaHovered($scope.hover), area = point.area;
                 if (point.area != 'invalidArea' && (point.x < 0 || point.y < 0)) area = 'invalidArea';
@@ -1040,7 +1033,7 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     redrawProjections($scope.bidProjections, "bid");
                     redrawProjections($scope.askProjections, "ask");
                 }, true);
-               //$scope.$watch("hover", redrawHoverCurve, true);
+               $scope.$watch("hover", redrawHoverCurve, true);
                initialize();
             });
 
