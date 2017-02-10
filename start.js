@@ -407,7 +407,22 @@ rs.set("test_qty", sign * $scope.accept.qty);
 
         processConfig();
 
-        $scope.utilityFunction = new Function(["x", "y"], "return " + $scope.config.utility + ";");
+        if ($scope.config.type === 'shapley') {
+          if ($scope.config.role === 1) {
+            $scope.utilityFunction = function(x, y) {
+              var u1 = $scope.config.d * x + $scope.config.a[0] * (1 - Math.exp(-y / $scope.config.b[0]));
+              return $scope.config.g[0] * u1 - $scope.config.h[0];
+            };
+          } else {
+            $scope.utilityFunction = function(x, y) {
+              var u2 = y + $scope.config.a[1] * (1 - Math.exp(-$scope.config.d * x / $scope.config.b[1]));
+              return $scope.config.g[1] * u2 - $scope.config.h[1]
+            };
+          }
+        } else {
+          $scope.utilityFunction = new Function(["x", "y"], "return " + $scope.config.utility + ";");
+        }
+
 
         $scope.dotsPerLine = 80;
 
@@ -648,19 +663,57 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.config.heatmapHover = $.isArray(rs.config.heatmapHover) ? rs.config.heatmapHover[userIndex] : rs.config.heatmapHover;
         $scope.config.confirmClick = $.isArray(rs.config.confirmClick) ? rs.config.confirmClick[userIndex] : rs.config.confirmClick;
 
-        for (var i = 0; i < rs.subjects.length; i++) {
+        $scope.config.type = rs.config.type;
+        if ($scope.config.type === 'shapley') {
+          $scope.config.role = rs.config.roles[rs._group-1][rs.config.groups[rs._group-1].indexOf(userIndex+1)];
 
+          $scope.config.w1 = rs.config.w1;
+          $scope.config.w2 = rs.config.w2;
+          $scope.config.d = rs.config.d;
+          $scope.config.a = rs.config.a;
+          $scope.config.b = rs.config.b;
+          $scope.config.g = rs.config.g;
+          $scope.config.h = rs.config.h;
+
+          console.log('myrole: '+$scope.config.role);
+
+          if ($scope.config.role === 1) {
+            $scope.config.Ex = $scope.config.w1[0] / $scope.config.d;
+            $scope.config.Ey = $scope.config.w1[1];
+          } else {
+            $scope.config.Ex = $scope.config.w2[0] / $scope.config.d;
+            $scope.config.Ey = $scope.config.w2[1];
+          }
+
+          console.log($scope.config.Ex);
+          console.log($scope.config.Ey);
+        }
+
+        for (var i = 0; i < rs.subjects.length; i++) {
+          if ($scope.config.type === 'shapley') {
+            console.log(rs.config.roles[rs._group-1][i]);
+            if (rs.config.roles[rs._group-1][i] === 1) {
+              XLimit += $scope.config.w1[0] / $scope.config.d;
+              YLimit += $scope.config.w1[1];
+            } else {
+              XLimit += $scope.config.w2[0] / $scope.config.d;
+              YLimit += $scope.config.w2[1];
+            }
+          } else {
             if ($.isArray(rs.config.Ex)) {
                 XLimit += rs.config.Ex[rs.config.groups[rs._group-1][0]+i-1];
+                console.log(rs.config.Ex[rs.config.groups[rs._group-1][0]+i-1]);
             } else {
                 XLimit += rs.config.Ex;
             }
 
             if ($.isArray(rs.config.Ey)) {
                 YLimit += rs.config.Ey[rs.config.groups[rs._group-1][0]+i-1];
+                console.log(rs.config.Ey[rs.config.groups[rs._group-1][0]+i-1]);
             } else {
                 YLimit += rs.config.Ey;
             }
+          }
         }
 
         $scope.config.XLimit = XLimit;
