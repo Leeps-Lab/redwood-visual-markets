@@ -119,6 +119,10 @@ requestAnimationFrame( update );
                 }
             }
 
+            if ($scope.config.cancelBid && bidIndex >= 0) {
+              rs.trigger("cancel", {user_id: rs.user_id, index: $scope.lastBidIndex});
+            }
+
             // Should this be inside of for loop?
             if (done) return;
 
@@ -444,6 +448,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.plotModel.config['showThermometer'] = $scope.config.showThermometer;
         $scope.plotModel.config['disableHeatmapClicks'] = $scope.config.disableHeatmapClicks;
         $scope.plotModel.config['showFrontier'] = $scope.config.showFrontier;
+        $scope.plotModel.config['showBidAsk'] = $scope.config.showBidAsk;
         $scope.plotModel.config['Ex'] = $scope.Ex;
         $scope.plotModel.config['Ey'] = $scope.Ey;
         $scope.plotModel.config['colorBound'] = $scope.config.colorBound;
@@ -662,6 +667,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.config.canSell = $.isArray(rs.config.canSell) ? rs.config.canSell[userIndex] : rs.config.canSell;
         $scope.config.heatmapHover = $.isArray(rs.config.heatmapHover) ? rs.config.heatmapHover[userIndex] : rs.config.heatmapHover;
         $scope.config.confirmClick = $.isArray(rs.config.confirmClick) ? rs.config.confirmClick[userIndex] : rs.config.confirmClick;
+        $scope.config.cancelBid = $.isArray(rs.config.cancelBid) ? rs.config.cancelBid[userIndex] : rs.config.cancelBid;
 
         $scope.config.type = rs.config.type;
         if ($scope.config.type === 'shapley') {
@@ -731,6 +737,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.config.showThermometer = $.isArray(rs.config.showThermometer) ? rs.config.showThermometer[userIndex] : rs.config.showThermometer;
         $scope.config.disableHeatmapClicks = $.isArray(rs.config.disableHeatmapClicks) ? rs.config.disableHeatmapClicks[userIndex] : rs.config.disableHeatmapClicks;
         $scope.config.showFrontier = $.isArray(rs.config.showFrontier) ? rs.config.showFrontier[userIndex] : rs.config.showFrontier;
+        $scope.config.showBidAsk = $.isArray(rs.config.showBidAsk) ? rs.config.showBidAsk[userIndex] : rs.config.showBidAsk;
         $scope.config.colorBound = rs.config.colorBound;
         $scope.config.disableTextInput = $.isArray(rs.config.disableTextInput) ? rs.config.disableTextInput[userIndex] : rs.config.disableTextInput;
 
@@ -1002,7 +1009,9 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                 if (area == 'createOffer') {
                     $scope.$emit("heatMap.click", point.x, point.y, 'createOffer', point.index);
                     drawGhostProjection($scope.ghostProjections);
-                } else if (area != 'invalidArea') $scope.$emit("heatMap.click", point.x, point.y, 'acceptOffer', point.index);
+                } else if (area != 'invalidArea') {
+                  $scope.$emit("heatMap.click", point.x, point.y, 'acceptOffer', point.index);
+                }
             });
 
             plot.on("mousedown", function() {
@@ -1328,45 +1337,47 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
 
                 if (!$scope.config.showFrontier) return;
 
-                var container = type === "bid" ? bidProjectionContainer : askProjectionContainer;
-                var color = type === "bid" ? "red" : "green";
-                var points = container.selectAll('.projection-point').data(projections || []);
+                if ($scope.config.showBidAsk) {
+                  var container = type === "bid" ? bidProjectionContainer : askProjectionContainer;
+                  var color = type === "bid" ? "red" : "green";
+                  var points = container.selectAll('.projection-point').data(projections || []);
 
-                points.enter()
-                    .append("circle")
-                    .attr("class", "projection-point")
-                    .attr("r", 5)
-                    .attr("fill", color)
-                    .attr('stroke', 'black');
+                  points.enter()
+                      .append("circle")
+                      .attr("class", "projection-point")
+                      .attr("r", 5)
+                      .attr("fill", color)
+                      .attr('stroke', 'black');
 
-                points
-                    .attr("cx", function(projection) {
-                        return scales.xToOffset(projection.x);
-                    })
-                    .attr("cy", function(projection) {
-                        return scales.yToOffset(projection.y);
-                    });
+                  points
+                      .attr("cx", function(projection) {
+                          return scales.xToOffset(projection.x);
+                      })
+                      .attr("cy", function(projection) {
+                          return scales.yToOffset(projection.y);
+                      });
 
-                points.exit().remove();
+                  points.exit().remove();
 
-                var connectors = container.selectAll('.projection-connector').data(projections || []);
+                  var connectors = container.selectAll('.projection-connector').data(projections || []);
 
-                var previous = [scales.xToOffset($scope.allocation.x), scales.yToOffset($scope.allocation.y)];
-                connectors.enter()
-                    .append("g")
-                    .attr("class", "projection-connector");
-                connectors
-                    .each(function(projection) {
-                        d3.select(this).selectAll('*').remove();
-                        var current = [scales.xToOffset(projection.x), scales.yToOffset(projection.y)];
-                        d3.select(this).append("path").data([[angular.copy(previous), current]])
-                            .style("fill", "none")
-                            .style("stroke", color)
-                            .style("stroke-width", "2")
-                            .attr("d", d3.svg.line());
-                        previous = current;
-                    });
-                connectors.exit().remove();
+                  var previous = [scales.xToOffset($scope.allocation.x), scales.yToOffset($scope.allocation.y)];
+                  connectors.enter()
+                      .append("g")
+                      .attr("class", "projection-connector");
+                  connectors
+                      .each(function(projection) {
+                          d3.select(this).selectAll('*').remove();
+                          var current = [scales.xToOffset(projection.x), scales.yToOffset(projection.y)];
+                          d3.select(this).append("path").data([[angular.copy(previous), current]])
+                              .style("fill", "none")
+                              .style("stroke", color)
+                              .style("stroke-width", "2")
+                              .attr("d", d3.svg.line());
+                          previous = current;
+                      });
+                  connectors.exit().remove();
+                }
 
                 drawGhostProjection($scope.ghostProjections);
             }
