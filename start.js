@@ -447,6 +447,7 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.plotModel.config['removeOnPartial'] = $scope.config.removeOnPartial;
         $scope.plotModel.config['showThermometer'] = $scope.config.showThermometer;
         $scope.plotModel.config['disableHeatmapClicks'] = $scope.config.disableHeatmapClicks;
+        $scope.plotModel.config['hoverClick'] = $scope.config.hoverClick;
         $scope.plotModel.config['showFrontier'] = $scope.config.showFrontier;
         $scope.plotModel.config['showBidAsk'] = $scope.config.showBidAsk;
         $scope.plotModel.config['Ex'] = $scope.Ex;
@@ -736,10 +737,13 @@ rs.set("test_qty", sign * $scope.accept.qty);
         $scope.config.removeOnPartial = $.isArray(rs.config.removeOnPartial) ? rs.config.removeOnPartial[userIndex] : rs.config.removeOnPartial;
         $scope.config.showThermometer = $.isArray(rs.config.showThermometer) ? rs.config.showThermometer[userIndex] : rs.config.showThermometer;
         $scope.config.disableHeatmapClicks = $.isArray(rs.config.disableHeatmapClicks) ? rs.config.disableHeatmapClicks[userIndex] : rs.config.disableHeatmapClicks;
+        $scope.config.hoverClick = $.isArray(rs.config.hoverClick) ? rs.config.hoverClick[userIndex] : rs.config.hoverClick;
         $scope.config.showFrontier = $.isArray(rs.config.showFrontier) ? rs.config.showFrontier[userIndex] : rs.config.showFrontier;
         $scope.config.showBidAsk = $.isArray(rs.config.showBidAsk) ? rs.config.showBidAsk[userIndex] : rs.config.showBidAsk;
-        $scope.config.colorBound = rs.config.colorBound;
         $scope.config.disableTextInput = $.isArray(rs.config.disableTextInput) ? rs.config.disableTextInput[userIndex] : rs.config.disableTextInput;
+
+        $scope.config.colorBound = $.isArray(rs.config.colorBound[0]) ? rs.config.colorBound[$scope.config.role-1] : rs.config.colorBound;
+        console.log('bound: '+$scope.config.colorBound);
 
         $scope.config.rounds =  rs.config.rounds;
         $scope.config.roundDuration =  rs.config.roundDuration;
@@ -1012,6 +1016,12 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                 } else if (area != 'invalidArea') {
                   $scope.$emit("heatMap.click", point.x, point.y, 'acceptOffer', point.index);
                 }
+                console.log('click');
+                if ($scope.config.hoverClick) {
+                  console.log($scope.config.hoverClick);
+                  console.log($scope.hover);
+                  redrawHoverCurve($scope.hover);
+                }
             });
 
             plot.on("mousedown", function() {
@@ -1044,7 +1054,9 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                         onDrag();
                     } else {
                         $scope.hover = {x: values.x, y: values.y};
-                        redrawHoverCurve($scope.hover);
+                        if (!$scope.config.hoverClick) {
+                          redrawHoverCurve($scope.hover);
+                        }
                     }
                 });
             });
@@ -1095,7 +1107,11 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     redrawProjections($scope.bidProjections, "bid");
                     redrawProjections($scope.askProjections, "ask");
                 }, true);
-               $scope.$watch("hover", redrawHoverCurve, true);
+               $scope.$watch("hover", function() {
+                 if (!$scope.config.hoverClick) {
+                   redrawHoverCurve();
+                 }
+               }, true);
                initialize();
             });
 
@@ -1198,24 +1214,42 @@ Redwood.directive("svgPlot", ['$timeout', 'AsyncCallManager', function($timeout,
                     return d3.max(col);
                 });
 
-                var initialUtility = $scope.config.utilityFunction($scope.config.Ex, $scope.config.Ey),
-                    colorRange = ["#0000ff", "#00fff0", "#ffff00", "#ff0000"],
-                    utilRange = maxUtility - minUtility, stretch,
-                    bound = $scope.config.colorBound;
+                var initialUtility = $scope.config.utilityFunction($scope.config.Ex, $scope.config.Ey);
+                var colorRange = ["#0000ff", "#00fff0", "#ffff00", "#ff0000"];
+                var utilRange = maxUtility - minUtility;
+                var stretch;
+                var bound = $scope.config.colorBound;
                 if (bound) {
-                    if (bound[0] == 0) stretch = [initialUtility, initialUtility+bound[1]*utilRange];
-                    else if (bound[1] == 0) stretch = [initialUtility+bound[0]*utilRange, initialUtility];
-                    else stretch = [initialUtility+bound[0]*utilRange, initialUtility+bound[1]*utilRange];
-                } else stretch = [minUtility, maxUtility];
+                    if (bound[0] == 0) {
+                      stretch = [initialUtility, initialUtility+bound[1]*utilRange];
+                    } else if (bound[1] == 0) {
+                      stretch = [initialUtility+bound[0]*utilRange, initialUtility];
+                    } else {
+                      stretch = [initialUtility+bound[0]*utilRange, initialUtility+bound[1]*utilRange];
+                    }
+                } else {
+                  stretch = [minUtility, maxUtility];
+                }
                 var colorDomain = d3.rw.stretch(stretch.sort(sortNumber), colorRange.length);
                 scales.colorScale = d3.scale.linear().domain(colorDomain).range(colorRange);
                 referenceValues = [];
+
+                console.log('stretch: '+stretch.sort(sortNumber));
+                console.log('domain: '+colorDomain);
+                console.log('start: '+$scope.config.utilityFunction($scope.config.Ex, $scope.config.Ey));
+                console.log('half: '+$scope.config.utilityFunction($scope.config.Ex/2, $scope.config.Ey/2));
+                console.log('double: '+$scope.config.utilityFunction(2*$scope.config.Ex, 2*$scope.config.Ey));
+                console.log('min: '+$scope.config.utilityFunction(xMin, yMin));
+                console.log('max: '+$scope.config.utilityFunction(xMax, yMax));
+
                 referenceValues.push($scope.config.utilityFunction($scope.config.Ex, $scope.config.Ey));
                 for(var i = 0; i < $scope.config.numCurves; i++) {
                     referenceValues.push($scope.config.utilityFunction(((i + 1) * (xMax - xMin) / ($scope.config.numCurves + 1)) + xMin, ((i + 1) * (yMax - yMin) / ($scope.config.numCurves + 1)) + yMin));
                 }
                 redrawHeatMap();
-                if ($scope.config.showThermometer) redrawThermometer();
+                if ($scope.config.showThermometer) {
+                  redrawThermometer();
+                }
                 else $('#thermometerDisplay').hide();
             }
 
