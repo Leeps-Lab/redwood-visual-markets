@@ -52,7 +52,7 @@
                             <div class="panel panel-bid">
                                 <div class="panel-heading">Bids</div>
                                 <div class="panel-body">
-                                    <div class="panel panel-default" style="height: 280px; overflow-y: auto;">
+                                    <div class="panel panel-default offers" style="height: 280px; overflow-y: auto;">
                                         <div class="panel-body">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-addon no-input" style="font-weight: bold;">Price</span>
@@ -62,7 +62,7 @@
                                                 <div ng-repeat="bid in bids"
                                                      class="input-group input-group-sm"
                                                      key="{{bid.key}}"
-                                                     ng-click="projectOffer(bid)"
+                                                     ng-click="projectOffer(bid, 'bid')"
                                                      ng-dblclick="openOffer(bid)"
                                                      ng-right-click="cancelOffer(bid)"
                                                      style="cursor: pointer;">
@@ -79,11 +79,13 @@
                                     <div ng-if="!config.disableTextInput" id="bidForm" ng-show="config.canBid" ng-enabled="inputsEnabled" class="form-group">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-addon">Price</span>
-                                            <input type="number" ng-model="bid.price" ng-change="onBidInputChange()" min="0" id="bid-price" class="form-control"/>
+                                            <input type="number" ng-model="bid.price" ng-change="onBidInputChange()"
+                                              step="{{config.priceStep}}" min="0" id="bid-price" class="form-control"/>
                                         </div>
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-addon">Qty</span>
-                                            <input type="number" ng-model="bid.qty" ng-change="onBidInputChange()" min="0" class="form-control"/>
+                                            <input type="number" ng-model="bid.qty" ng-change="onBidInputChange()"
+                                              step="{{config.qtyStep}}" min="0" class="form-control"/>
                                         </div>
                                         <button ng-click="submitBid()" ng-disabled="bidButtonLocked" class="btn btn-danger btn-sm">Bid</button>
                                     </div>
@@ -94,7 +96,7 @@
                             <div class="panel panel-trade">
                                 <div class="panel-heading">Trades</div>
                                 <div class="panel-body">
-                                    <div class="panel panel-default" style="height: 395px; overflow-y: auto;">
+                                    <div class="panel panel-default offers" style="height: 395px; overflow-y: auto;">
                                         <div class="panel-body">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-addon no-input" style="font-weight: bold;">Price</span>
@@ -120,7 +122,7 @@
                             <div class="panel panel-ask">
                                 <div class="panel-heading">Asks</div>
                                 <div class="panel-body">
-                                    <div class="panel panel-default" style="height: 280px; overflow-y: auto;">
+                                    <div class="panel panel-default offers" style="height: 280px; overflow-y: auto;">
                                         <div class="panel-body">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-addon no-input" style="font-weight: bold;">Price</span>
@@ -130,7 +132,7 @@
                                                 <div ng-repeat="ask in asks"
                                                      class="input-group input-group-sm"
                                                      key="{{ask.key}}"
-                                                     ng-click="projectOffer(ask)"
+                                                     ng-click="projectOffer(ask, 'ask')"
                                                      ng-dblclick="openOffer(ask)"
                                                      ng-right-click="cancelOffer(ask)"
                                                      style="cursor: pointer;">
@@ -147,11 +149,13 @@
                                     <div ng-if="!config.disableTextInput" id="askForm" ng-show="config.canAsk" ng-enabled="inputsEnabled" class="form-group">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-addon">Price</span>
-                                            <input type="number" ng-model="ask.price" ng-change="onAskInputChange()" min="0" class="form-control"/>
+                                            <input type="number" ng-model="ask.price" ng-change="onAskInputChange()"
+                                              step="{{config.priceStep}}" min="0" class="form-control"/>
                                         </div>
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-addon">Qty</span>
-                                            <input type="number" ng-model="ask.qty" ng-change="onAskInputChange()" min="0" class="form-control"/>
+                                            <input type="number" ng-model="ask.qty" ng-change="onAskInputChange()"
+                                              step="{{config.qtyStep}}" min="0" class="form-control"/>
                                         </div>
                                         <button ng-click="submitAsk()" ng-disabled="askButtonLocked" class="btn btn-success btn-sm">Ask</button>
                                     </div>
