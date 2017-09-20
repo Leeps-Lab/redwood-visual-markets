@@ -67,6 +67,7 @@
               // Blended and Sequential
               var done = false;
               var qty = Math.abs($scope.bid.qty);
+              var price = $scope.bid.price
 
               for (var i = 0; i < $scope.asks.length; i++) {
                   if (!$scope.asks[i].closed &&
@@ -83,9 +84,9 @@
                       }
 
                       $scope.acceptOfferFromPlot($scope.asks[i]);
-                      done = true;
+                      done = true;                      
                   }
-              }
+              }              
 
               if ($scope.config.cancelBid && bidIndex >= 0) {
                 rs.trigger("cancel", {user_id: rs.user_id, index: $scope.lastBidIndex});
@@ -93,6 +94,14 @@
 
               // Should this be inside of for loop?
               if (done) {
+                // if we crossed with at least one other order and had some quantity left over on our bid,
+                // submit another bid for the leftover quantity
+                if (qty > 0) {
+                    $scope.bid = {price: price, qty: qty};
+                    $scope.ask = {};
+                    // submit the new bid after a delay to make sure the asks we crossed with are removed
+                    rs.timeout($scope.submitBid, 50);
+                }
                 return;
               }
 
@@ -169,6 +178,7 @@
               // Blended and Sequential
               var done = false;
               var qty = Math.abs($scope.ask.qty);
+              var price = $scope.ask.price;
               var total_x = 0;
               var total_y = 0;
 
@@ -191,8 +201,18 @@
               }
 
               // Should this be inside of for loop?
-              if (done) return;
+              if (done) {
+                  console.log(price, qty);
+                  // if our ask crossed with at least one bid and we had some quantity left over,
+                  // submit a new ask for the leftover quantity
+                  if (qty > 0) {
+                    $scope.ask = {price: price, qty: qty};
+                    // submit new ask after a delay to make sure bids we crossed with are removed
+                    rs.timeout($scope.submitAsk, 50);
+                  }
 
+                return;
+              }
               // Should only get here if there was no matching bid
               // Allow only one ask per person by cancelling any previous ask
               if (askIndex >= 0) {
@@ -694,16 +714,13 @@
               $scope.offers = {};
 
               $scope.roundStartTime = (new Date()).getTime() / 1000;
-              rs.trigger("roundStartTime", $scope.roundStartTime);
+              rs.send("roundStartTime", $scope.roundStartTime);
               checkTime();
 
               $scope.inputsEnabled = true;
           });
       });
 
-      rs.on("roundStartTime", function(roundStartTime) {
-          $scope.roundStartTime = Math.min(roundStartTime, $scope.roundStartTime);
-      });
       rs.recv("roundStartTime", function(sender, roundStartTime) {
           $scope.roundStartTime = Math.min(roundStartTime, $scope.roundStartTime);
       });
