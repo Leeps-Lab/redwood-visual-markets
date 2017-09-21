@@ -96,7 +96,7 @@
               if (done) {
                 // if we crossed with at least one other order and had some quantity left over on our bid,
                 // submit another bid for the leftover quantity
-                if (qty > 0) {
+                if (qty >= 0.01) {
                     $scope.bid = {price: price, qty: qty};
                     $scope.ask = {};
                     // submit the new bid after a delay to make sure the asks we crossed with are removed
@@ -205,7 +205,7 @@
                   console.log(price, qty);
                   // if our ask crossed with at least one bid and we had some quantity left over,
                   // submit a new ask for the leftover quantity
-                  if (qty > 0) {
+                  if (qty >= 0.01) {
                     $scope.ask = {price: price, qty: qty};
                     // submit new ask after a delay to make sure bids we crossed with are removed
                     rs.timeout($scope.submitAsk, 50);
@@ -679,7 +679,8 @@
                   $scope.inputsEnabled = false;
                   $scope.roundStartTime = null;
                   rs.trigger("next_round");
-              }).start();
+              });
+          $scope.stopwatch.start();
           $scope.timeTotal = $scope.stopwatch.getDurationInTicks()
       };
 
