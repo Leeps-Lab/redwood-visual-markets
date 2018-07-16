@@ -612,7 +612,14 @@
                 return $scope.config.g[1] * u2 - $scope.config.h[1]
               };
             }
-          } else {
+          } else if ($scope.config.type = 'cobb-douglas') {
+            $scope.utilityFunction = function(x, y) {
+                return $scope.config.cd_c *
+                    Math.pow(x * $scope.config.cd_a, $scope.config.cd_alpha) *
+                    Math.pow(y * $scope.config.cd_b, 1 - $scope.config.cd_alpha);
+            }
+          }
+          else {
             $scope.utilityFunction = new Function(["x", "y"], "return " + $scope.config.utility + ";");
           }
 
@@ -861,9 +868,18 @@
           $scope.config.confirmClick = $.isArray(rs.config.confirmClick) ? rs.config.confirmClick[userIndex] : rs.config.confirmClick;
           $scope.config.cancelBid = $.isArray(rs.config.cancelBid) ? rs.config.cancelBid[userIndex] : rs.config.cancelBid;
 
+          $scope.config.role = rs.config.roles[rs._group-1][rs.config.groups[rs._group-1].indexOf(userIndex+1)];
+
           $scope.config.type = rs.config.type;
-          if ($scope.config.type === 'shapley') {
-            $scope.config.role = rs.config.roles[rs._group-1][rs.config.groups[rs._group-1].indexOf(userIndex+1)];
+
+          if ($scope.config.type === 'cobb-douglas') {
+            const role_index = $scope.config.role - 1;
+            $scope.config.cd_alpha = rs.config.cd_alpha[role_index];
+            $scope.config.cd_c = rs.config.cd_c[role_index];
+            $scope.config.cd_b = rs.config.cd_b[role_index];
+            $scope.config.cd_a = rs.config.cd_a[role_index];
+          }
+          else if ($scope.config.type === 'shapley') {
 
             $scope.config.w1 = rs.config.w1;
             $scope.config.w2 = rs.config.w2;
