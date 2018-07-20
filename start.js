@@ -577,7 +577,7 @@
       }
 
       function isValidAsk(price, qty) {
-        console.log('isvalidask');
+        console.log('isvalisubjectsdask');
         console.log(Math.abs(qty));
         console.log($scope.plotModel.config.xLimit);
         console.log($scope.allocation.x);
@@ -587,13 +587,15 @@
         console.log(!isNaN(qty));
         console.log(qty < 0);
         console.log(Math.abs(qty) <= $scope.plotModel.config.xLimit - $scope.allocation.x);
+        console.log(Math.abs(qty) <= $scope.allocation.x);
         console.log('end');
 
           return !isNaN(price)
               && price >= 0
               && !isNaN(qty)
               && qty < 0
-              && Math.abs(qty) <= $scope.plotModel.config.xLimit - $scope.allocation.x;
+              && Math.abs(qty) <= $scope.plotModel.config.xLimit - $scope.allocation.x
+              && Math.abs(qty) <= $scope.allocation.x;
       }
 
       rs.on_load(function() {

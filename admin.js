@@ -1,4 +1,4 @@
-Redwood.controller("AdminCtrl", ["$rootScope", "$scope", "Admin", function($rootScope, $scope, ra) {
+Redwood.controller("AdminCtrl", ["$rootScope", "$scope", "Admin", "$interval", function($rootScope, $scope, ra, $interval) {
 	var Display = { //Display controller
 
 		initialize: function() {
@@ -48,6 +48,17 @@ Redwood.controller("AdminCtrl", ["$rootScope", "$scope", "Admin", function($root
 
 			ra.on_all_paused(function() {
 				$("#resume-session").removeAttr("disabled");
+
+				if ($("#auto-unpause").prop("checked")) {
+					$scope.time_remaining = 15;
+					$interval(function() {
+						$scope.time_remaining--;
+						if ($scope.time_remaining <= 0) {
+							ra.trigger("resume");
+							$scope.time_remaining = "";
+						}
+					}, 1000, 15);
+				}
 			});
 
 			ra.on_subject_resumed(function(user) {
