@@ -34,6 +34,8 @@ Redwood.controller("AdminCtrl", ["$rootScope", "$scope", "Admin", "$interval", f
 			$("#resume-session").click(function () {
 				$("#resume-session").attr("disabled", "disabled");
 				ra.trigger("resume");
+				$interval.cancel($scope.interval_id);
+				$scope.time_remaining = '';
 			});
 			ra.on("resume", function() {
 				$("#resume-session").attr("disabled", "disabled");
@@ -46,20 +48,34 @@ Redwood.controller("AdminCtrl", ["$rootScope", "$scope", "Admin", "$interval", f
 				$("tr.subject-" + userId + " :nth-child(4)").text("Paused"); //Display current period for each user
 			});
 
+			$("#auto-unpause").click(function() {
+				if ($(this).prop("checked")) {
+					start_timer();
+				}
+				else {
+					$interval.cancel($scope.interval_id);
+					$scope.time_remaining = '';
+				}
+			})
+
 			ra.on_all_paused(function() {
 				$("#resume-session").removeAttr("disabled");
 
 				if ($("#auto-unpause").prop("checked")) {
-					$scope.time_remaining = 15;
-					$interval(function() {
-						$scope.time_remaining--;
-						if ($scope.time_remaining <= 0) {
-							ra.trigger("resume");
-							$scope.time_remaining = "";
-						}
-					}, 1000, 15);
+					start_timer();
 				}
 			});
+
+			function start_timer() {
+				$scope.time_remaining = 15;
+				$scope.interval_id = $interval(function() {
+					$scope.time_remaining--;
+					if ($scope.time_remaining <= 0) {
+						ra.trigger("resume");
+						$scope.time_remaining = "";
+					}
+				}, 1000, 15);
+			}
 
 			ra.on_subject_resumed(function(user) {
 				$("tr.subject-" + user).removeClass("warning"); //Display current period for each user
