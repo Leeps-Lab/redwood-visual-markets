@@ -445,9 +445,9 @@
           if(offer.qty > 0 && !$scope.config.canSell) return;
           var sign = offer.qty < 0 ? -1 : 1;
           // Handling various cases of invalid accepting offers
-          if ($scope.accept.qty.toFixed(2) <= 0 || $scope.accept.qty > Math.abs(offer.qty)) {
+          if ($scope.accept.qty <= 0 || $scope.accept.qty > Math.abs(offer.qty)) {
               $.simplyToast("To accept for this offer, please enter a valid quantity: (0.01 to "+Math.abs(offer.qty).toFixed(2)+")", 'info');
-          } else if ($scope.allocation.x.toFixed(2) - $scope.accept.qty.toFixed(2) < 0 || $scope.allocation.y.toFixed(2) < ($scope.accept.qty * offer.price).toFixed(2)) {
+          } else if ($scope.allocation.x - $scope.accept.qty < 0 || $scope.allocation.y < ($scope.accept.qty * offer.price)) {
               $.simplyToast("Not enough asset to process transaction.", 'info');
           } else {
               $(this).attr("disabled", "disabled");
