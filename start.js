@@ -28,8 +28,6 @@
           };
         } else { // Only show if input is valid
           $scope.plotModel.hover = false;
-          console.log('in onbidinputchange');
-          $.simplyToast('Invalid bid!', 'info');
         }
       };
 
@@ -141,7 +139,6 @@
           };
         } else {
           $scope.plotModel.hover = false;
-          $.simplyToast('Invalid ask!', 'info');
         }
       };
 
