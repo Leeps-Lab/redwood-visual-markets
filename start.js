@@ -540,9 +540,9 @@
       });
 
       rs.on("trade", function(info) {
-          $scope.trades = rs.data.trade.reverse() || [];
+          $scope.trades = rs.data.trade.slice().reverse() || [];
           setTimeout(function () {
-              var border = info.type == 'bid' ? 'red' : 'green';
+              var border = info.type == 'bid' ? 'green' : 'red';
               if ($scope.trades[0].sender == rs.user_id)
                   $($('#trades-container > .input-group')[0]).css('border', '2px solid ' + border);
               $('#trades-container > .input-group').animate({ opacity: 1 }, 250);
@@ -551,7 +551,7 @@
           }, 50);
       });
       rs.recv("trade", function(sender, info) {
-          $scope.trades = rs.data.trade.reverse() || [];
+          $scope.trades = rs.data.trade.slice().reverse() || [];
           setTimeout(function () {
               var border = info.type == 'bid' ? 'red' : 'green', offerer = "Player " + info.offerer + "'s ";
               if (info.offerer == rs.user_id) {
