@@ -10,6 +10,9 @@
                     </li>
                 </ul>
                 <div class="navbar-right">
+                    <div class="navbar-text" ng-style="{ 'border-color': inputsEnabled ? '#90ee90' : '#ff4d4d' }">
+                        {{ inputsEnabled ? "Playing" : "Paused" }}
+                    </div>
                     <div class="navbar-text">Period: <span>{{$root.period}}</span></div>
                     <div class="navbar-text">Round: <span>{{round}} / {{rounds}}</span></div>
                     <div class="navbar-text">Time: <span>{{timeRemaining | timeString}}</span></div>
@@ -53,12 +56,12 @@
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-addon">Price</span>
                                                 <input type="number" ng-model="bid.price" ng-change="onBidInputChange()"
-                                                step="{{config.priceStep}}" min="0" id="bid-price" class="form-control"/>
+                                                step="{{config.priceStep}}" min="0" id="bid-price" class="form-control" ng-disabled="!inputsEnabled"/>
                                             </div>
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-addon">Qty</span>
                                                 <input type="number" ng-model="bid.qty" ng-change="onBidInputChange()"
-                                                step="{{config.qtyStep}}" min="0" class="form-control"/>
+                                                step="{{config.qtyStep}}" min="0" class="form-control" ng-disabled="!inputsEnabled"/>
                                             </div>
                                             <button ng-click="submitBid()" ng-disabled="bidButtonLocked" class="btn btn-danger btn-sm">Bid</button>
                                         </div>
@@ -123,12 +126,12 @@
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-addon">Price</span>
                                                 <input type="number" ng-model="ask.price" ng-change="onAskInputChange()"
-                                                step="{{config.priceStep}}" min="0" class="form-control"/>
+                                                step="{{config.priceStep}}" min="0" class="form-control" ng-disabled="!inputsEnabled"/>
                                             </div>
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-addon">Qty</span>
                                                 <input type="number" ng-model="ask.qty" ng-change="onAskInputChange()"
-                                                step="{{config.qtyStep}}" min="0" class="form-control"/>
+                                                step="{{config.qtyStep}}" min="0" class="form-control" ng-disabled="!inputsEnabled"/>
                                             </div>
                                             <button ng-click="submitAsk()" ng-disabled="askButtonLocked" class="btn btn-success btn-sm">Ask</button>
                                         </div>

@@ -470,6 +470,9 @@
       }
 
       $scope.$on("heatMap.click", function(e, x, y, action, offer_index) {
+          if (!$scope.inputsEnabled) {
+            return;
+          }
           $('#state').text(action);
           var qty = (x - $scope.allocation.x).toFixed(2)/1;
           if (Math.abs(qty) <= 0.01) return;
@@ -848,7 +851,11 @@
 
           rs.set("results", finalResult);
           rs.add_points($scope.utilityFunction($scope.allocation.x, $scope.allocation.y));
-          rs.next_period();
+
+          $scope.bidButtonLocked = true;
+          $scope.askButtonLocked = true;
+
+          rs.next_period(15);
       });
 
       var processConfig = function() {
