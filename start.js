@@ -235,7 +235,7 @@
           if (checked) {
               if ($scope.trades) {
                 $scope.trades.sort(function(a, b) {
-                    return b.price * b.qty - a.price * a.qty;
+                    return b.price - a.price;
                 })
               }
           }
