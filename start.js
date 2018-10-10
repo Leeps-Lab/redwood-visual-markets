@@ -229,6 +229,22 @@
           }
       };
 
+      $scope.sortTrades = function(event) {
+          const checked = event.target.checked;
+
+          if (checked) {
+              if ($scope.trades) {
+                $scope.trades.sort(function(a, b) {
+                    return b.price * b.qty - a.price * a.qty;
+                })
+              }
+          }
+          else {
+              if (rs.data.trade) {
+                $scope.trades = rs.data.trade.slice().reverse() || [];
+              }
+          }
+      };
 
       function getPrice(a,b) {
           console.log('getPrice');
@@ -705,6 +721,7 @@
       rs.on("next_round", function(time) {
 
           $scope.inputsEnabled = false;
+          $scope.showSortCheckbox = true;
 
           if($scope.rounds && $scope.round >= $scope.rounds) {
               rs.trigger("next_period");
@@ -728,6 +745,7 @@
               checkTime();
 
               $scope.inputsEnabled = true;
+              $scope.showSortCheckbox = false;
           });
       });
 

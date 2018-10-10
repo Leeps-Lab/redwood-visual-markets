@@ -70,7 +70,13 @@
                             </div>
                             <div class="col-lg-4" style="padding-left: 5px; padding-right: 5px;">
                                 <div class="panel panel-trade">
-                                    <div class="panel-heading">Trades</div>
+                                    <div class="panel-heading">
+                                        <span>Trades</span> 
+                                        <span style="float: right;" ng-show="showSortCheckbox">
+                                            <span>Sort Trades: </span>
+                                            <input type="checkbox" ng-click="sortTrades($event)">
+                                        </span>
+                                    </div>
                                     <div class="panel-body">
                                         <div class="panel panel-default offers" style="height: 395px; overflow-y: auto;">
                                             <div class="panel-body">
