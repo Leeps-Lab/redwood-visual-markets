@@ -460,8 +460,12 @@
           // Handling various cases of invalid accepting offers
           if ($scope.accept.qty <= 0 || $scope.accept.qty > Math.abs(offer.qty)) {
               $.simplyToast("To accept for this offer, please enter a valid quantity: (0.01 to "+Math.abs(offer.qty).toFixed(2)+")", 'info');
-          } else if ($scope.allocation.x - $scope.accept.qty < 0 || $scope.allocation.y < ($scope.accept.qty * offer.price)) {
-              $.simplyToast("Not enough asset to process transaction.", 'info');
+          } else if (offer.qty < 0 && $scope.allocation.y < ($scope.accept.qty * offer.price)) {
+              $.simplyToast("Not enough Y to accept this offer", 'danger');
+          }
+          else if (offer.qty > 0 && $scope.allocation.x < $scope.accept.qty) {
+              $.simplyToast("Not enough X to accept this offer", 'danger');
+
           } else {
               $(this).attr("disabled", "disabled");
               rs.trigger("accept", {sender: rs.user_id, user_id: offer.user_id, key: offer.key, qty: sign * $scope.accept.qty});
