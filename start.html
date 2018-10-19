@@ -191,15 +191,15 @@
                             <div id="summary-box" ng-show="roundEnded" class="panel">
                                 <div>
                                     <div>Initial Allocation:</div>
-                                    <div>{{ config.Ex }} x &nbsp; {{ config.Ey }} y</div>
+                                    <div>{{ config.Ex  | number : 2}} x &nbsp; {{ config.Ey  | number : 2}} y</div>
                                 </div>
                                 <div>
                                     <div>Current Allocation:</div>
-                                    <div>{{ allocation.x }} x &nbsp; {{ allocation.y }} y</div>
+                                    <div>{{ allocation.x  | number : 2}} x &nbsp; {{ allocation.y  | number : 2}} y</div>
                                 </div>
                                 <div>
                                     <div>Gains:</div>
-                                    <div> {{ allocation.x - config.Ex }} x &nbsp; {{ allocation.y - config.Ey }} y</div>
+                                    <div> {{ allocation.x - config.Ex  | number : 2}} x &nbsp; {{ allocation.y - config.Ey  | number : 2}} y</div>
                                 </div>
                             </div>
                             <svg-plot ng-show="config.showHeatmap"
