@@ -48,7 +48,7 @@
                   // Cancel the ask and bid - ask and bid cross cancel each other
                   if ($scope.offers[askKey].price <= $scope.bid.price && !$scope.offers[askKey].closed) {
                       // Emit message and clear heatmap
-                      $.simplyToast('Your orders crossed and cancelled each other.', 'info');
+                      $.simplyToast('Your orders crossed and cancelled each other', 'info');
                       $scope.plotModel.ghostProjections = [{},{}];
 
                       // Cancel ask and bid
@@ -118,7 +118,7 @@
               $scope.actionCount++;
           } else {
             console.log('in submitbid');
-              $.simplyToast('Invalid bid!', 'info');
+              $.simplyToast('Invalid bid!', 'warning');
           }
       };
 
@@ -158,7 +158,7 @@
                   // Cancel the bid and ask - bid and ask cross cancel each other
                   if ($scope.offers[bidKey].price >= $scope.ask.price && !$scope.offers[bidKey].closed) {
                       // Emit message and clear heatmap
-                      $.simplyToast('Your orders crossed and cancelled each other.', 'info');
+                      $.simplyToast('Your orders crossed and cancelled each other', 'info');
                       $scope.plotModel.ghostProjections = [{},{}];
 
                       // Cancel bid and ask
@@ -225,7 +225,7 @@
               $scope.actionCount++;
 
           } else {
-              $.simplyToast('Invalid ask!', 'info');
+              $.simplyToast('Invalid ask!', 'warning');
           }
       };
 
@@ -459,13 +459,11 @@
           var sign = offer.qty < 0 ? -1 : 1;
           // Handling various cases of invalid accepting offers
           if ($scope.accept.qty <= 0 || $scope.accept.qty > Math.abs(offer.qty)) {
-              $.simplyToast("To accept for this offer, please enter a valid quantity: (0.01 to "+Math.abs(offer.qty).toFixed(2)+")", 'info');
+              $.simplyToast("To accept for this offer, please enter a valid quantity: (0.01 to "+Math.abs(offer.qty).toFixed(2)+")", 'warning');
           } else if (offer.qty < 0 && $scope.allocation.y < ($scope.accept.qty * offer.price)) {
-              $.simplyToast("Not enough Y to accept this offer", 'danger');
-          }
-          else if (offer.qty > 0 && $scope.allocation.x < $scope.accept.qty) {
-              $.simplyToast("Not enough X to accept this offer", 'danger');
-
+              $.simplyToast("Not enough Y to accept this offer", 'warning');
+          } else if (offer.qty > 0 && $scope.allocation.x < $scope.accept.qty) {
+              $.simplyToast("Not enough X to accept this offer", 'warning');
           } else {
               $(this).attr("disabled", "disabled");
               rs.trigger("accept", {sender: rs.user_id, user_id: offer.user_id, key: offer.key, qty: sign * $scope.accept.qty});
@@ -558,7 +556,7 @@
             }
           } else {
             console.log('invalid, probably');
-            $.simplyToast('Invalid click!', 'info');
+            $.simplyToast('Invalid click!', 'warning');
           }
       });
 
