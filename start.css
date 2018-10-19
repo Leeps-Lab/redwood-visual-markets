@@ -201,3 +201,27 @@
   border: 3px solid transparent;
   border-radius: 5px;
 }
+
+#summary-box {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 33%;
+  left: 43%;
+  width: 200px;
+  height: 200px;
+  border: 2px solid grey;
+}
+
+#summary-box > div {
+  flex-grow: 1;
+  padding: 10px;
+}
+
+#summary-box > div > div:first-child {
+  font-weight: bold;
+}
+
+#summary-box > div > div:last-child {
+  text-align: center;
+}

@@ -721,7 +721,7 @@
       rs.on("next_round", function(time) {
 
           $scope.inputsEnabled = false;
-          $scope.showSortCheckbox = true;
+          $scope.roundEnded = true;
 
           if($scope.rounds && $scope.round >= $scope.rounds) {
               rs.trigger("next_period");
@@ -745,7 +745,7 @@
               checkTime();
 
               $scope.inputsEnabled = true;
-              $scope.showSortCheckbox = false;
+              $scope.roundEnded = false;
           });
       });
 

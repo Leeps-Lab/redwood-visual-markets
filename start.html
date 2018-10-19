@@ -72,7 +72,7 @@
                                 <div class="panel panel-trade">
                                     <div class="panel-heading">
                                         <span>Trades</span> 
-                                        <span style="float: right;" ng-show="showSortCheckbox">
+                                        <span style="float: right;" ng-show="roundEnded">
                                             <span>Sort Trades: </span>
                                             <input type="checkbox" ng-click="sortTrades($event)">
                                         </span>
@@ -187,7 +187,21 @@
                         <div><canvas id="thermometer" class="thermometer"></canvas></div>
             </div>
                         <div class="heatmapRender" hidden><canvas id="heatmapRender"></canvas></div>
-                        <div style="padding-right: 4px;">
+                        <div style="padding-right: 4px; position: relative;">
+                            <div id="summary-box" ng-show="roundEnded" class="panel">
+                                <div>
+                                    <div>Initial Allocation:</div>
+                                    <div>{{ config.Ex }} x &nbsp; {{ config.Ey }} y</div>
+                                </div>
+                                <div>
+                                    <div>Current Allocation:</div>
+                                    <div>{{ allocation.x }} x &nbsp; {{ allocation.y }} y</div>
+                                </div>
+                                <div>
+                                    <div>Gains:</div>
+                                    <div> {{ allocation.x - config.Ex }} x &nbsp; {{ allocation.y - config.Ey }} y</div>
+                                </div>
+                            </div>
                             <svg-plot ng-show="config.showHeatmap"
                                     ng-right-click="cancelPlotOffer($event)"
                                     config="plotModel.config"
