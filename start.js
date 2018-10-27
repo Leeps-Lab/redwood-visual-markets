@@ -875,7 +875,7 @@
           $scope.bidButtonLocked = true;
           $scope.askButtonLocked = true;
 
-          rs.next_period(15);
+          rs.next_period(30);
       });
 
       var processConfig = function() {
