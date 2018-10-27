@@ -1520,13 +1520,12 @@
                       utilRange = maxUtility - minUtility, stretch,
                       bound = $scope.config.colorBound;
                   if (bound) {
-                      if (bound[0] == 0) stretch = [initialUtility, initialUtility+bound[1]*utilRange];
-                      else if (bound[1] == 0) stretch = [initialUtility+bound[0]*utilRange, initialUtility];
-                      else stretch = [initialUtility+bound[0]*utilRange, initialUtility+bound[1]*utilRange];
+                     stretch = [initialUtility+bound[0]*utilRange, initialUtility+bound[1]*utilRange];
                   } else stretch = [minUtility, maxUtility];
                   var colorDomain = d3.rw.stretch(stretch.sort(sortNumber), colorRange.length);
                   for (var i = 0; i < colorRange.length; i++) {
                       var point = colorDomain[i]/(maxUtility - minUtility);
+                      if (point < 0) point = 0;
                       if (point > 1) point = 1;
                       grd.addColorStop(point, colorRange[i]);
                   }
