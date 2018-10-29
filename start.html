@@ -190,16 +190,26 @@
                         <div style="padding-right: 4px; position: relative;">
                             <div id="summary-box" ng-show="roundEnded" class="panel">
                                 <div>
-                                    <div>Initial Allocation:</div>
-                                    <div>{{ config.Ex  | number : 2}} x &nbsp; {{ config.Ey  | number : 2}} y</div>
+                                    <div>Final Allocation:</div>
+                                    <div>
+                                        {{ allocation.x  | number : 2}} x &nbsp;
+                                        {{ allocation.y  | number : 2}} y &nbsp;
+                                        {{utilityFunction(allocation.x, allocation.y) | number : 2}} £
+                                    </div>
                                 </div>
                                 <div>
-                                    <div>Current Allocation:</div>
-                                    <div>{{ allocation.x  | number : 2}} x &nbsp; {{ allocation.y  | number : 2}} y</div>
+                                    <div>Initial Allocation:</div>
+                                    <div>
+                                        {{ config.Ex  | number : 2}} x &nbsp;
+                                        {{ config.Ey  | number : 2}} y &nbsp;
+                                        {{utilityFunction(config.Ex, config.Ey) | number : 2}} £
+                                    </div>
                                 </div>
                                 <div>
                                     <div>Gains:</div>
-                                    <div> {{ allocation.x - config.Ex  | number : 2}} x &nbsp; {{ allocation.y - config.Ey  | number : 2}} y</div>
+                                    <div>
+                                        {{utilityFunction(allocation.x, allocation.y) - utilityFunction(config.Ex, config.Ey) | number : 2}} £
+                                    </div>
                                 </div>
                             </div>
                             <svg-plot ng-show="config.showHeatmap"
