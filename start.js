@@ -671,6 +671,7 @@
           $scope.plotModel.config['colorBound'] = $scope.config.colorBound;
           $scope.plotModel.config['heatmapHover'] = $scope.config.heatmapHover;
           $scope.plotModel.config['showUserGhostLine'] = $scope.config.showUserGhostLine;
+          $scope.plotModel.config['showHeatmapColors'] = $scope.config.showHeatmapColors;
 
           $scope.rounds = $scope.config.rounds || 1;
           $scope.round = 0;
@@ -969,6 +970,8 @@
           $scope.config.showOnlyInputs = $.isArray(rs.config.showOnlyInputs) ? rs.config.showOnlyInputs[userIndex] : rs.config.showOnlyInputs;
           $scope.config.showUserGhostLine = $.isArray(rs.config.showUserGhostLine) ? rs.config.showUserGhostLine[userIndex] : rs.config.showUserGhostLine;
           $scope.config.enableOfferClick = $.isArray(rs.config.enableOfferClick) ? rs.config.enableOfferClick[userIndex] : rs.config.enableOfferClick;
+          $scope.config.showHeatmapColors = $.isArray(rs.config.showHeatmapColors) ? rs.config.showHeatmapColors[userIndex] : rs.config.showHeatmapColors;
+          $scope.config.showTrades = $.isArray(rs.config.showTrades) ? rs.config.showTrades[userIndex] : rs.config.showTrades;
 
           $scope.config.priceStep = $.isArray(rs.config.priceStep) ? rs.config.priceStep[userIndex] : rs.config.priceStep;
           $scope.config.qtyStep = $.isArray(rs.config.qtyStep) ? rs.config.qtyStep[userIndex] : rs.config.qtyStep;
@@ -1599,13 +1602,24 @@
               }
 
               function redrawHeatMap() {
-                  var heatMap = d3.rw.heatMap()
+                  console.log($scope.config.showHeatmapColors)
+                  if ($scope.config.showHeatmapColors) {
+                    var heatMap = d3.rw.heatMap()
                       .grid(utilityGrid)
                       .xScale(scales.xIndexToOffset)
                       .yScale(scales.yIndexToOffset)
                       .colorScale(scales.colorScale);
-                  heatMapContainer.call(heatMap);
-
+                    heatMapContainer.call(heatMap);
+                  }
+                  else {
+                    heatMapContainer.append('rect')
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr('width', plotWidth)
+                    .attr('height', plotHeight)
+                    .style('opacity', 0);
+                  }
+         
                   var referenceCurves = baseLayer.selectAll(".reference-curve").data(referenceValues);
                   referenceCurves.enter()
                       .append("g")
