@@ -244,6 +244,10 @@
                 $scope.trades = rs.data.trade.slice().reverse() || [];
               }
           }
+
+          if (!$scope.config.showOthersTrades) {
+            $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
+          }
       };
 
       function getPrice(a,b) {
@@ -562,6 +566,9 @@
 
       rs.on("trade", function(info) {
           $scope.trades = rs.data.trade.slice().reverse() || [];
+          if (!$scope.config.showOthersTrades) {
+            $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
+          }
           setTimeout(function () {
               var border = info.type == 'bid' ? 'green' : 'red';
               if ($scope.trades[0].sender == rs.user_id)
@@ -573,6 +580,10 @@
       });
       rs.recv("trade", function(sender, info) {
           $scope.trades = rs.data.trade.slice().reverse() || [];
+          if (!$scope.config.showOthersTrades) {
+            $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
+          }
+          if (info.offerer != rs.user_id) return;
           setTimeout(function () {
               var border = info.type == 'bid' ? 'red' : 'green', offerer = "Player " + info.offerer + "'s ";
               if (info.offerer == rs.user_id) {
@@ -971,7 +982,7 @@
           $scope.config.showUserGhostLine = $.isArray(rs.config.showUserGhostLine) ? rs.config.showUserGhostLine[userIndex] : rs.config.showUserGhostLine;
           $scope.config.enableOfferClick = $.isArray(rs.config.enableOfferClick) ? rs.config.enableOfferClick[userIndex] : rs.config.enableOfferClick;
           $scope.config.showHeatmapColors = $.isArray(rs.config.showHeatmapColors) ? rs.config.showHeatmapColors[userIndex] : rs.config.showHeatmapColors;
-          $scope.config.showTrades = $.isArray(rs.config.showTrades) ? rs.config.showTrades[userIndex] : rs.config.showTrades;
+          $scope.config.showOthersTrades = $.isArray(rs.config.showOthersTrades) ? rs.config.showOthersTrades[userIndex] : rs.config.showOthersTrades;
 
           $scope.config.priceStep = $.isArray(rs.config.priceStep) ? rs.config.priceStep[userIndex] : rs.config.priceStep;
           $scope.config.qtyStep = $.isArray(rs.config.qtyStep) ? rs.config.qtyStep[userIndex] : rs.config.qtyStep;
