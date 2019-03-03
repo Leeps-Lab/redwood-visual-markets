@@ -245,7 +245,7 @@
               }
           }
 
-          if (!$scope.config.showOthersTrades) {
+          if ($scope.trades && !$scope.config.showOthersTradesInterim) {
             $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
           }
       };
@@ -566,7 +566,7 @@
 
       rs.on("trade", function(info) {
           $scope.trades = rs.data.trade.slice().reverse() || [];
-          if (!$scope.config.showOthersTrades) {
+          if (!$scope.config.showOthersTradesPlaying) {
             $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
           }
           setTimeout(function () {
@@ -580,7 +580,7 @@
       });
       rs.recv("trade", function(sender, info) {
           $scope.trades = rs.data.trade.slice().reverse() || [];
-          if (!$scope.config.showOthersTrades) {
+          if (!$scope.config.showOthersTradesPlaying) {
             $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
           }
           if (info.offerer != rs.user_id) return;
@@ -887,6 +887,13 @@
           $scope.bidButtonLocked = true;
           $scope.askButtonLocked = true;
 
+          if (rs.data.trade) {
+            $scope.trades = rs.data.trade.slice().reverse() || [];
+          }
+          if ($scope.trades && !$scope.config.showOthersTradesInterim) {
+            $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
+          }
+
           rs.next_period(30);
       });
 
@@ -982,7 +989,8 @@
           $scope.config.showUserGhostLine = $.isArray(rs.config.showUserGhostLine) ? rs.config.showUserGhostLine[userIndex] : rs.config.showUserGhostLine;
           $scope.config.enableOfferClick = $.isArray(rs.config.enableOfferClick) ? rs.config.enableOfferClick[userIndex] : rs.config.enableOfferClick;
           $scope.config.showHeatmapColors = $.isArray(rs.config.showHeatmapColors) ? rs.config.showHeatmapColors[userIndex] : rs.config.showHeatmapColors;
-          $scope.config.showOthersTrades = $.isArray(rs.config.showOthersTrades) ? rs.config.showOthersTrades[userIndex] : rs.config.showOthersTrades;
+          $scope.config.showOthersTradesPlaying = $.isArray(rs.config.showOthersTradesPlaying) ? rs.config.showOthersTradesPlaying[userIndex] : rs.config.showOthersTradesPlaying;
+          $scope.config.showOthersTradesInterim = $.isArray(rs.config.showOthersTradesInterim) ? rs.config.showOthersTradesInterim[userIndex] : rs.config.showOthersTradesInterim;
 
           $scope.config.priceStep = $.isArray(rs.config.priceStep) ? rs.config.priceStep[userIndex] : rs.config.priceStep;
           $scope.config.qtyStep = $.isArray(rs.config.qtyStep) ? rs.config.qtyStep[userIndex] : rs.config.qtyStep;
