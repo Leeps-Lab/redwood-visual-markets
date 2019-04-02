@@ -631,6 +631,7 @@
           console.log(rs.config);
           processConfig();
 
+
           if ($scope.config.type === 'shapley') {
             if ($scope.config.role === 1) {
               $scope.utilityFunction = function(x, y) {
@@ -643,7 +644,7 @@
                 return $scope.config.g[1] * u2 - $scope.config.h[1]
               };
             }
-          } else if ($scope.config.type = 'cobb-douglas') {
+          } else if ($scope.config.type === 'cobb-douglas') {
             $scope.utilityFunction = function(x, y) {
                 return $scope.config.cd_c *
                     Math.pow(x * $scope.config.cd_a, $scope.config.cd_alpha) *
@@ -651,7 +652,9 @@
             }
           }
           else {
+              console.log($scope.config.utility)
             $scope.utilityFunction = new Function(["x", "y"], "return " + $scope.config.utility + ";");
+            console.log($scope.utilityFunction)
           }
 
 
@@ -904,7 +907,8 @@
 
           $scope.config.Ex = $.isArray(rs.config.Ex) ? rs.config.Ex[userIndex] : rs.config.Ex;
           $scope.config.Ey = $.isArray(rs.config.Ey) ? rs.config.Ey[userIndex] : rs.config.Ey;
-          $scope.config.utility = $.isArray(rs.config.utility) ? rs.config.utility[userIndex] : rs.config.utility;
+          // if specifying a custom utility function either just put one function or separate functions for each player with "|" characters
+          $scope.config.utility = rs.config.utility.includes('|') ? rs.config.utility.split('|')[userIndex] : rs.config.utility;
           $scope.config.canBid = $.isArray(rs.config.canBid) ? rs.config.canBid[userIndex] : rs.config.canBid;
           $scope.config.canAsk = $.isArray(rs.config.canAsk) ? rs.config.canAsk[userIndex] : rs.config.canAsk;
           $scope.config.canBuy = $.isArray(rs.config.canBuy) ? rs.config.canBuy[userIndex] : rs.config.canBuy;
