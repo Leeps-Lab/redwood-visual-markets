@@ -905,10 +905,13 @@
           var XLimit = 0, YLimit = 0;
           $scope.config = {};
 
+          $scope.config.role = rs.config.roles[rs._group-1][rs.config.groups[rs._group-1].indexOf(userIndex+1)];
+          const role_index = $scope.config.role - 1;
+
           $scope.config.Ex = $.isArray(rs.config.Ex) ? rs.config.Ex[userIndex] : rs.config.Ex;
           $scope.config.Ey = $.isArray(rs.config.Ey) ? rs.config.Ey[userIndex] : rs.config.Ey;
           // if specifying a custom utility function either just put one function or separate functions for each player with "|" characters
-          $scope.config.utility = rs.config.utility.includes('|') ? rs.config.utility.split('|')[userIndex] : rs.config.utility;
+          $scope.config.utility = rs.config.utility.includes('|') ? rs.config.utility.split('|')[role_index] : rs.config.utility;
           $scope.config.canBid = $.isArray(rs.config.canBid) ? rs.config.canBid[userIndex] : rs.config.canBid;
           $scope.config.canAsk = $.isArray(rs.config.canAsk) ? rs.config.canAsk[userIndex] : rs.config.canAsk;
           $scope.config.canBuy = $.isArray(rs.config.canBuy) ? rs.config.canBuy[userIndex] : rs.config.canBuy;
@@ -917,12 +920,10 @@
           $scope.config.confirmClick = $.isArray(rs.config.confirmClick) ? rs.config.confirmClick[userIndex] : rs.config.confirmClick;
           $scope.config.cancelBid = $.isArray(rs.config.cancelBid) ? rs.config.cancelBid[userIndex] : rs.config.cancelBid;
 
-          $scope.config.role = rs.config.roles[rs._group-1][rs.config.groups[rs._group-1].indexOf(userIndex+1)];
 
           $scope.config.type = rs.config.type;
 
           if ($scope.config.type === 'cobb-douglas') {
-            const role_index = $scope.config.role - 1;
             $scope.config.cd_alpha = rs.config.cd_alpha[role_index];
             $scope.config.cd_c = rs.config.cd_c[role_index];
             $scope.config.cd_b = rs.config.cd_b[role_index];
