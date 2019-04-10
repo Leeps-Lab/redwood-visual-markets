@@ -932,7 +932,7 @@
           else if ($scope.config.type === 'shapley') {
 
             $scope.config.w1 = rs.config.w1;
-            $scope.config.w2 = rs.config.w2;
+            scope.config.w2 = rs.config.w2;
             $scope.config.d = rs.config.d;
             $scope.config.a = rs.config.a;
             $scope.config.b = rs.config.b;
@@ -972,8 +972,20 @@
             }
           }
 
-          $scope.config.XLimit = XLimit;
-          $scope.config.YLimit = YLimit;
+          if (rs.config.xLimit) {
+            $scope.config.XLimit = $.isArray(rs.config.xLimit) ? rs.config.xLimit[userIndex] : rs.config.xLimit;
+          }
+          else {
+            $scope.config.XLimit = XLimit;
+          }
+
+          if (rs.config.yLimit) {
+            $scope.config.YLimit = $.isArray(rs.config.yLimit) ? rs.config.yLimit[userIndex] : rs.config.yLimit;
+          }
+          else {
+            $scope.config.YLimit = YLimit;
+          }
+
           $scope.config.showHeatmap = $.isArray(rs.config.showHeatmap) ? rs.config.showHeatmap[userIndex] : rs.config.showHeatmap;
           $scope.config.showThermometer = $.isArray(rs.config.showThermometer) ? rs.config.showThermometer[userIndex] : rs.config.showThermometer;
           $scope.config.showOrderBook = $.isArray(rs.config.showOrderBook) ? rs.config.showOrderBook[userIndex] : rs.config.showOrderBook;
