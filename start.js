@@ -897,7 +897,7 @@
             $scope.trades = $scope.trades.filter(e => e.sender == rs.user_id || e.offerer == rs.user_id);
           }
 
-          rs.next_period(30);
+          rs.next_period(20);
       });
 
       var processConfig = function() {
